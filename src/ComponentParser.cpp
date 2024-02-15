@@ -14,7 +14,9 @@ ComponentParser::ComponentParser(ParserDataManager* data_manager)
 {
     const ParserTableEntry ADD_ENTRY = {.r=ADD_REGEX,.func=parse_add};
     const ParserTableEntry SUB_ENTRY = {.r=SUB_REGEX,.func=parse_sub};
-    PARSER_TABLE = {ADD_ENTRY, SUB_ENTRY};
+    const ParserTableEntry MUL_ENTRY = {.r=MUL_REGEX,.func=parse_mul};
+    const ParserTableEntry COMP_ENTRY = {.r=COMP_REGEX,.func=parse_comp};
+    PARSER_TABLE = {ADD_ENTRY, SUB_ENTRY, MUL_ENTRY, COMP_ENTRY};
 }
 void ComponentParser::parse_line(string line)
 {

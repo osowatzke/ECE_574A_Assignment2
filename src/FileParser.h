@@ -25,11 +25,13 @@ namespace Parser
             void parse_wires();
             void parse_components();
             void print_wires();
+            void print_components();
         private:            
             ParserDataManager data_manager;
             WireParser wire_parser;
             ComponentParser component_parser;
             vector<string> lines;
+            string get_component_type(component* comp);
     };
 
     // enum SignalType {Input, Output, Wire, Register};
