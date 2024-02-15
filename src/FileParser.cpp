@@ -78,28 +78,18 @@ void FileParser::print_components()
         auto end = data_manager.components[i]->inputs.end();
         for (auto j = begin; j != end; ++j)
         {
-            cout << "\t\t" << j->first << " = ";
             if (j->second != NULL)
             {
-                cout << j->second->name << endl;
-            }
-            else
-            {
-                cout << endl;
+                cout << "\t\t" << j->first << " = " << j->second->name << endl;
             }
         }
         begin = data_manager.components[i]->outputs.begin();
         end = data_manager.components[i]->outputs.end();
         for (auto j = begin; j != end; ++j)
         {
-            cout << "\t\t" << j->first << " = ";
             if (j->second != NULL)
             {
-                cout << j->second->name << endl;
-            }
-            else
-            {
-                cout << endl;
+                cout << "\t\t" << j->first << " = " << j->second->name << endl;
             }
         }
     }

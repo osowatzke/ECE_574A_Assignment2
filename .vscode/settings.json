@@ -17,6 +17,7 @@
         "array": "cpp",
         "string_view": "cpp",
         "initializer_list": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "cstdlib": "cpp"
     }
 }

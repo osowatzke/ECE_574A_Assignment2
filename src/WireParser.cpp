@@ -63,9 +63,5 @@ namespace Parser
         {
             parse_line(lines[i]);
         }
-        for (size_t i = 0; i < data_manager->wires.size(); ++i)
-        {
-            cout << data_manager->wires[i]->name << endl;
-        }
     }
 }

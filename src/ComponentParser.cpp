@@ -12,11 +12,21 @@ namespace Parser
 ComponentParser::ComponentParser(ParserDataManager* data_manager)
     : data_manager(data_manager)
 {
+    const ParserTableEntry REG_ENTRY = {.r=REG_REGEX,.func=parse_reg};
     const ParserTableEntry ADD_ENTRY = {.r=ADD_REGEX,.func=parse_add};
     const ParserTableEntry SUB_ENTRY = {.r=SUB_REGEX,.func=parse_sub};
     const ParserTableEntry MUL_ENTRY = {.r=MUL_REGEX,.func=parse_mul};
     const ParserTableEntry COMP_ENTRY = {.r=COMP_REGEX,.func=parse_comp};
-    PARSER_TABLE = {ADD_ENTRY, SUB_ENTRY, MUL_ENTRY, COMP_ENTRY};
+    const ParserTableEntry MUX2x1_ENTRY = {.r=MUX2x1_REGEX,.func=parse_mux2x1};
+    const ParserTableEntry SHR_ENTRY = {.r=SHR_REGEX,.func=parse_shr};
+    const ParserTableEntry SHL_ENTRY = {.r=SHL_REGEX,.func=parse_shl};
+    const ParserTableEntry DIV_ENTRY = {.r=DIV_REGEX,.func=parse_div};
+    const ParserTableEntry MOD_ENTRY = {.r=MOD_REGEX,.func=parse_mod};
+    const ParserTableEntry INC_ENTRY = {.r=INC_REGEX,.func=parse_inc};
+    const ParserTableEntry DEC_ENTRY = {.r=DEC_REGEX,.func=parse_dec};
+    PARSER_TABLE = {REG_ENTRY, ADD_ENTRY, SUB_ENTRY, MUL_ENTRY,
+            COMP_ENTRY, MUX2x1_ENTRY, SHR_ENTRY, SHL_ENTRY,
+            DIV_ENTRY, MOD_ENTRY, INC_ENTRY, DEC_ENTRY};
 }
 void ComponentParser::parse_line(string line)
 {
@@ -116,5 +126,35 @@ void ComponentParser::parse_shl(smatch match)
     shl->inputs["a"] = data_manager->find_wire(match.str(2));
     shl->inputs["sh_amt"] = data_manager->find_wire(match.str(3));
     shl->outputs["d"] = data_manager->find_wire(match.str(1));
+}
+void ComponentParser::parse_div(smatch match)
+{
+    component* div = data_manager->components.back();
+    div->type = ComponentType::DIV;
+    div->inputs["a"] = data_manager->find_wire(match.str(2));
+    div->inputs["b"] = data_manager->find_wire(match.str(3));
+    div->outputs["qout"] = data_manager->find_wire(match.str(1));
+}
+void ComponentParser::parse_mod(smatch match)
+{
+    component* mod = data_manager->components.back();
+    mod->type = ComponentType::MOD;
+    mod->inputs["a"] = data_manager->find_wire(match.str(2));
+    mod->inputs["b"] = data_manager->find_wire(match.str(3));
+    mod->outputs["rem"] = data_manager->find_wire(match.str(1));
+}
+void ComponentParser::parse_inc(smatch match)
+{
+    component* mod = data_manager->components.back();
+    mod->type = ComponentType::INC;
+    mod->inputs["a"] = data_manager->find_wire(match.str(2));
+    mod->outputs["d"] = data_manager->find_wire(match.str(1));
+}
+void ComponentParser::parse_dec(smatch match)
+{
+    component* mod = data_manager->components.back();
+    mod->type = ComponentType::DEC;
+    mod->inputs["a"] = data_manager->find_wire(match.str(2));
+    mod->outputs["d"] = data_manager->find_wire(match.str(1));
 }
 } // namespace Parser
