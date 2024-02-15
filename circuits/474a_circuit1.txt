@@ -3,7 +3,7 @@ input Int8 a, b, c
 output Int8 z
 output Int16 x
 
-wire Int8 d, e
+wire Int8 d, e // q
 wire Int16 f, g
 wire Int16 xwire
 
