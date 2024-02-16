@@ -12,18 +12,42 @@ namespace Parser
 ComponentParser::ComponentParser(ParserDataManager* data_manager)
     : data_manager(data_manager)
 {
-    const ParserTableEntry REG_ENTRY = {.r=REG_REGEX,.func=parse_reg};
-    const ParserTableEntry ADD_ENTRY = {.r=ADD_REGEX,.func=parse_add};
-    const ParserTableEntry SUB_ENTRY = {.r=SUB_REGEX,.func=parse_sub};
-    const ParserTableEntry MUL_ENTRY = {.r=MUL_REGEX,.func=parse_mul};
-    const ParserTableEntry COMP_ENTRY = {.r=COMP_REGEX,.func=parse_comp};
-    const ParserTableEntry MUX2x1_ENTRY = {.r=MUX2x1_REGEX,.func=parse_mux2x1};
-    const ParserTableEntry SHR_ENTRY = {.r=SHR_REGEX,.func=parse_shr};
-    const ParserTableEntry SHL_ENTRY = {.r=SHL_REGEX,.func=parse_shl};
-    const ParserTableEntry DIV_ENTRY = {.r=DIV_REGEX,.func=parse_div};
-    const ParserTableEntry MOD_ENTRY = {.r=MOD_REGEX,.func=parse_mod};
-    const ParserTableEntry INC_ENTRY = {.r=INC_REGEX,.func=parse_inc};
-    const ParserTableEntry DEC_ENTRY = {.r=DEC_REGEX,.func=parse_dec};
+    ParserTableEntry REG_ENTRY;
+    REG_ENTRY.r = REG_REGEX;
+    REG_ENTRY.func = &ComponentParser::parse_reg;
+    ParserTableEntry ADD_ENTRY;
+    ADD_ENTRY.r = ADD_REGEX;
+    ADD_ENTRY.func = &ComponentParser::parse_add;
+    ParserTableEntry SUB_ENTRY;
+    SUB_ENTRY.r = SUB_REGEX;
+    SUB_ENTRY.func = &ComponentParser::parse_sub;
+    ParserTableEntry MUL_ENTRY;
+    MUL_ENTRY.r = MUL_REGEX;
+    MUL_ENTRY.func = &ComponentParser::parse_mul;
+    ParserTableEntry COMP_ENTRY;
+    COMP_ENTRY.r = COMP_REGEX;
+    COMP_ENTRY.func = &ComponentParser::parse_comp;
+    ParserTableEntry MUX2x1_ENTRY;
+    MUX2x1_ENTRY.r = MUX2x1_REGEX;
+    MUX2x1_ENTRY.func = &ComponentParser::parse_mux2x1;
+    ParserTableEntry SHL_ENTRY;
+    SHL_ENTRY.r = SHL_REGEX;
+    SHL_ENTRY.func = &ComponentParser::parse_shl;
+    ParserTableEntry SHR_ENTRY;
+    SHR_ENTRY.r = SHR_REGEX;
+    SHR_ENTRY.func = &ComponentParser::parse_shr;
+    ParserTableEntry DIV_ENTRY;
+    DIV_ENTRY.r = DIV_REGEX;
+    DIV_ENTRY.func = &ComponentParser::parse_div;
+    ParserTableEntry MOD_ENTRY;
+    MOD_ENTRY.r = MOD_REGEX;
+    MOD_ENTRY.func = &ComponentParser::parse_mod;
+    ParserTableEntry INC_ENTRY;
+    INC_ENTRY.r = INC_REGEX;
+    INC_ENTRY.func = &ComponentParser::parse_inc;
+    ParserTableEntry DEC_ENTRY;
+    DEC_ENTRY.r = DEC_REGEX;
+    DEC_ENTRY.func = &ComponentParser::parse_dec;
     PARSER_TABLE = {REG_ENTRY, ADD_ENTRY, SUB_ENTRY, MUL_ENTRY,
             COMP_ENTRY, MUX2x1_ENTRY, SHR_ENTRY, SHL_ENTRY,
             DIV_ENTRY, MOD_ENTRY, INC_ENTRY, DEC_ENTRY};
