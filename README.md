@@ -15,3 +15,11 @@ From the build directory, run the following command to configure the cmake proje
 Finally, run `cmake --build .` to compile.
 
 Once the build directory is created, you should only have to run the cmake commands from the build directory.
+
+### Running the code
+
+There is currently a `FileParser` which supports parsing behavioral netlists. It can be run from the build directory by issuing the following command:
+
+`.\src\FileParser.exe ..\circuits\<circuit_name>`
+
+where <circuit_name> is the name of the circuit you wish to parse.
