@@ -11,12 +11,6 @@ using namespace std;
 
 namespace Parser
 {
-    // struct signal {
-    //     string name;
-    //     int width;
-    //     bool sign;
-    // };
-
     class FileParser{
         public:
             FileParser();
@@ -33,10 +27,6 @@ namespace Parser
             vector<string> lines;
             string get_component_type(component* comp);
     };
-
-    // enum SignalType {Input, Output, Wire, Register};
-
-
-}
+} // namespace Parser
 
 #endif //GUARD_FileParser_h

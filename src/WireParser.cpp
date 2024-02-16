@@ -64,4 +64,4 @@ namespace Parser
             parse_line(lines[i]);
         }
     }
-}
+} // namespace Parser

@@ -127,8 +127,7 @@ string FileParser::get_component_type(component* comp)
             return "";
     }
 }
-
-}
+} // namespace Parser
 
 int main(int argc, char** argv)
 {

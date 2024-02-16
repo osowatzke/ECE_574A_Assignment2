@@ -18,6 +18,6 @@ namespace Parser
             ParserDataManager* data_manager;
             static WireType get_wire_type(string str);
     };
-}
+} // namespace Parser
 
-#endif
+#endif // GUARD_WireParser_h

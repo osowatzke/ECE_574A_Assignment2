@@ -56,4 +56,5 @@ class ComponentParser
         void parse_dec(smatch match);
 };
 } // namespace Parser
-#endif
+
+#endif // GUARD_ComponentParser_h

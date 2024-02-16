@@ -29,5 +29,6 @@ struct component
     map<string, wire*> inputs;
     map<string, wire*> outputs;
 };
-}
+} // namespace Parser
+
 #endif // GUARD_ParserTypes_h

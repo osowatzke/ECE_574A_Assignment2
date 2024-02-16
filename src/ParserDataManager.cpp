@@ -25,4 +25,4 @@ namespace Parser
             delete components[i];
         }
     }
-}
+} // namespace Parser

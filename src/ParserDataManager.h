@@ -15,5 +15,6 @@ class ParserDataManager
         ~ParserDataManager();
         wire* find_wire(string name);
 };
-}
+} // namespace Parser
+
 #endif // GUARD_ParserDataManager_h
