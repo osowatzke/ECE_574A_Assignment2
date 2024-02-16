@@ -23,3 +23,9 @@ There is currently a `FileParser` which supports parsing behavioral netlists. It
 `.\src\FileParser.exe ..\circuits\<circuit_name>`
 
 where <circuit_name> is the name of the circuit you wish to parse.
+
+### Debugging the code
+
+Refer to launch.json in the .vscode directory. It is currently configured to debug "474a_circuit1.txt". However, the launch.json file can be modified to support debugging of any parsing run.
+
+To debug, click on the Run and Debug tab and hit the play button to start a "Debug File Parser" run.
