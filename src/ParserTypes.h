@@ -1,7 +1,9 @@
 #ifndef GUARD_ParserTypes_h
 #define GUARD_ParserTypes_h
+
 #include <map>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -15,8 +17,8 @@ struct wire
     WireType type;
     int width;
     bool sign;
-    component* source;
-    component* dest;
+    vector<component*> src;
+    vector<component*> dest;
 };
 enum ComponentType{REG,ADD,SUB,MUL,COMP,MUX2x1,SHR,SHL,DIV,MOD,INC,DEC};
 struct component

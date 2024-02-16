@@ -53,59 +53,95 @@ void ComponentParser::parse_reg(smatch match)
 {
     component* reg = data_manager->components.back();
     reg->type = ComponentType::REG;
-    reg->inputs["d"] = data_manager->find_wire(match.str(2));
-    reg->outputs["q"] = data_manager->find_wire(match.str(1));
+    wire* d = data_manager->find_wire(match.str(2));
+    wire* q = data_manager->find_wire(match.str(1));
+    d->dest.push_back(reg);
+    q->src.push_back(reg);
+    reg->inputs["d"] = d;
+    reg->outputs["q"] = q;
 }
 void ComponentParser::parse_add(smatch match)
 {
     component* add = data_manager->components.back();
     add->type = ComponentType::ADD;
-    add->inputs["a"] = data_manager->find_wire(match.str(2));
-    add->inputs["b"] = data_manager->find_wire(match.str(3));
-    add->outputs["sum"] = data_manager->find_wire(match.str(1));
+    wire* a = data_manager->find_wire(match.str(2));
+    wire* b = data_manager->find_wire(match.str(3));
+    wire* sum = data_manager->find_wire(match.str(1));
+    a->dest.push_back(add);
+    b->dest.push_back(add);
+    sum->src.push_back(add);
+    add->inputs["a"] = a;
+    add->inputs["b"] = b;
+    add->outputs["sum"] = sum;
 }
 void ComponentParser::parse_sub(smatch match)
 {
     component* sub = data_manager->components.back();    
     sub->type = ComponentType::SUB;
-    sub->inputs["a"] = data_manager->find_wire(match.str(2));
-    sub->inputs["b"] = data_manager->find_wire(match.str(3));
-    sub->outputs["diff"] = data_manager->find_wire(match.str(1));
+    wire* a = data_manager->find_wire(match.str(2));
+    wire* b = data_manager->find_wire(match.str(3));
+    wire* diff = data_manager->find_wire(match.str(1));
+    a->dest.push_back(sub);
+    b->dest.push_back(sub);
+    diff->src.push_back(sub);
+    sub->inputs["a"] = a;
+    sub->inputs["b"] = b;
+    sub->outputs["diff"] = diff;
 }
 void ComponentParser::parse_mul(smatch match)
 {
     component* mul = data_manager->components.back();
     mul->type = ComponentType::MUL;
-    mul->inputs["a"] = data_manager->find_wire(match.str(2));
-    mul->inputs["b"] = data_manager->find_wire(match.str(3));
-    mul->outputs["prod"] = data_manager->find_wire(match.str(1));
+    wire* a = data_manager->find_wire(match.str(2));
+    wire* b = data_manager->find_wire(match.str(3));
+    wire* prod = data_manager->find_wire(match.str(1));
+    a->dest.push_back(mul);
+    b->dest.push_back(mul);
+    prod->src.push_back(mul);
+    mul->inputs["a"] = a;
+    mul->inputs["b"] = b;
+    mul->outputs["prod"] = prod;
 }
 void ComponentParser::parse_comp(smatch match)
 {
     component* comp = data_manager->components.back();
     comp->type = ComponentType::COMP;
-    comp->inputs["a"] = data_manager->find_wire(match.str(2));
-    comp->inputs["b"] = data_manager->find_wire(match.str(4));
+    wire* a = data_manager->find_wire(match.str(2));
+    wire* b = data_manager->find_wire(match.str(4));
+    wire* c = data_manager->find_wire(match.str(1));
+    a->dest.push_back(comp);
+    b->dest.push_back(comp);
+    c->src.push_back(comp);
+    comp->inputs["a"] = a;
+    comp->inputs["b"] = b;
     comp->outputs["gt"] = NULL;
     comp->outputs["lt"] = NULL;
     comp->outputs["eq"] = NULL;
     if (match.str(3) == ">")
     {
-        comp->outputs["gt"] = data_manager->find_wire(match.str(1));
+        comp->outputs["gt"] = c;
     }
     else if (match.str(3) == "<")
     {
-        comp->outputs["lt"] = data_manager->find_wire(match.str(1));
+        comp->outputs["lt"] = c;
     }
     else
     {
-        comp->outputs["eq"] = data_manager->find_wire(match.str(1));
+        comp->outputs["eq"] = c;
     }
 }
 void ComponentParser::parse_mux2x1(smatch match)
 {
     component* mux2x1 = data_manager->components.back();
     mux2x1->type = ComponentType::MUX2x1;
+    wire* sel = data_manager->find_wire(match.str(2));
+    wire* b = data_manager->find_wire(match.str(3));
+    wire* a = data_manager->find_wire(match.str(4));
+    wire* d = data_manager->find_wire(match.str(1));
+    a->dest.push_back(mux2x1);
+    b->dest.push_back(mux2x1);
+    sel->dest.push_back(mux2x1);
+    d->src.push_back(mux2x1);
     mux2x1->inputs["sel"] = data_manager->find_wire(match.str(2));
     mux2x1->inputs["b"] = data_manager->find_wire(match.str(3));
     mux2x1->inputs["a"] = data_manager->find_wire(match.str(4));
@@ -115,46 +151,78 @@ void ComponentParser::parse_shr(smatch match)
 {
     component* shr = data_manager->components.back();
     shr->type = ComponentType::SHR;
-    shr->inputs["a"] = data_manager->find_wire(match.str(2));
-    shr->inputs["sh_amt"] = data_manager->find_wire(match.str(3));
-    shr->outputs["d"] = data_manager->find_wire(match.str(1));
+    wire* a = data_manager->find_wire(match.str(2));
+    wire* sh_amt = data_manager->find_wire(match.str(3));
+    wire* d = data_manager->find_wire(match.str(1));
+    a->dest.push_back(shr);
+    sh_amt->dest.push_back(shr);
+    d->src.push_back(shr);
+    shr->inputs["a"] = a;
+    shr->inputs["sh_amt"] = sh_amt;
+    shr->outputs["d"] = d;
 }
 void ComponentParser::parse_shl(smatch match)
 {
     component* shl = data_manager->components.back();
     shl->type = ComponentType::SHL;
-    shl->inputs["a"] = data_manager->find_wire(match.str(2));
-    shl->inputs["sh_amt"] = data_manager->find_wire(match.str(3));
-    shl->outputs["d"] = data_manager->find_wire(match.str(1));
+    wire* a = data_manager->find_wire(match.str(2));
+    wire* sh_amt = data_manager->find_wire(match.str(3));
+    wire* d = data_manager->find_wire(match.str(1));
+    a->dest.push_back(shl);
+    sh_amt->dest.push_back(shl);
+    d->src.push_back(shl);
+    shl->inputs["a"] = a;
+    shl->inputs["sh_amt"] = sh_amt;
+    shl->outputs["d"] = d;
 }
 void ComponentParser::parse_div(smatch match)
 {
     component* div = data_manager->components.back();
     div->type = ComponentType::DIV;
-    div->inputs["a"] = data_manager->find_wire(match.str(2));
-    div->inputs["b"] = data_manager->find_wire(match.str(3));
-    div->outputs["qout"] = data_manager->find_wire(match.str(1));
+    wire* a = data_manager->find_wire(match.str(2));
+    wire* b = data_manager->find_wire(match.str(3));
+    wire* qout = data_manager->find_wire(match.str(1));
+    a->dest.push_back(div);
+    b->dest.push_back(div);
+    qout->src.push_back(div);
+    div->inputs["a"] = a;
+    div->inputs["b"] = b;
+    div->outputs["qout"] = qout;
 }
 void ComponentParser::parse_mod(smatch match)
 {
     component* mod = data_manager->components.back();
     mod->type = ComponentType::MOD;
-    mod->inputs["a"] = data_manager->find_wire(match.str(2));
-    mod->inputs["b"] = data_manager->find_wire(match.str(3));
-    mod->outputs["rem"] = data_manager->find_wire(match.str(1));
+    wire* a = data_manager->find_wire(match.str(2));
+    wire* b = data_manager->find_wire(match.str(3));
+    wire* rem = data_manager->find_wire(match.str(1));
+    a->dest.push_back(mod);
+    b->dest.push_back(mod);
+    rem->src.push_back(mod);
+    mod->inputs["a"] = a;
+    mod->inputs["b"] = b;
+    mod->outputs["rem"] = rem;
 }
 void ComponentParser::parse_inc(smatch match)
 {
-    component* mod = data_manager->components.back();
-    mod->type = ComponentType::INC;
-    mod->inputs["a"] = data_manager->find_wire(match.str(2));
-    mod->outputs["d"] = data_manager->find_wire(match.str(1));
+    component* inc = data_manager->components.back();
+    inc->type = ComponentType::INC;
+    wire* a = data_manager->find_wire(match.str(2));
+    wire* d = data_manager->find_wire(match.str(1));
+    a->dest.push_back(inc);
+    d->dest.push_back(inc);
+    inc->inputs["a"] = a;
+    inc->outputs["d"] = d;
 }
 void ComponentParser::parse_dec(smatch match)
 {
-    component* mod = data_manager->components.back();
-    mod->type = ComponentType::DEC;
-    mod->inputs["a"] = data_manager->find_wire(match.str(2));
-    mod->outputs["d"] = data_manager->find_wire(match.str(1));
+    component* dec = data_manager->components.back();
+    dec->type = ComponentType::DEC;
+    wire* a = data_manager->find_wire(match.str(2));
+    wire* d = data_manager->find_wire(match.str(1));
+    a->dest.push_back(dec);
+    d->dest.push_back(dec);
+    dec->inputs["a"] = data_manager->find_wire(match.str(2));
+    dec->outputs["d"] = data_manager->find_wire(match.str(1));
 }
 } // namespace Parser
