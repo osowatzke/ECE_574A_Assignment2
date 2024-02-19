@@ -12,6 +12,10 @@ Follow the steps in this article to install CMAKE:
 
 [https://code.visualstudio.com/docs/cpp/cmake-linux](https://code.visualstudio.com/docs/cpp/cmake-linux)
 
+Note that you may have to download directly from the CMAKE site instead of the link in the Visual Studio article:
+
+[https://cmake.org/download/](https://cmake.org/download/)
+
 ### Compiling the code
 
 If compiling for the first time, make a build directory by running `mkdir build` from the VS Code terminal.
