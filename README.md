@@ -8,6 +8,10 @@ Follow the steps in this article to install MINGW:
 
 [https://code.visualstudio.com/docs/cpp/config-mingw](https://code.visualstudio.com/docs/cpp/config-mingw)
 
+Follow the steps in this article to install CMAKE:
+
+[https://code.visualstudio.com/docs/cpp/cmake-linux](https://code.visualstudio.com/docs/cpp/cmake-linux)
+
 ### Compiling the code
 
 If compiling for the first time, make a build directory by running `mkdir build` from the VS Code terminal.
