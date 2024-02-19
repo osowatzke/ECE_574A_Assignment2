@@ -4,6 +4,10 @@ Follow the steps in this article to Configure VS Code for Microsoft C++:
 
 [https://code.visualstudio.com/docs/cpp/config-msvc](https://code.visualstudio.com/docs/cpp/config-msvc)
 
+Follow the steps in this article to install MINGW:
+
+[https://code.visualstudio.com/docs/cpp/config-mingw](https://code.visualstudio.com/docs/cpp/config-mingw)
+
 ### Compiling the code
 
 If compiling for the first time, make a build directory by running `mkdir build` from the VS Code terminal.
