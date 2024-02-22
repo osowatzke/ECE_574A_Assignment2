@@ -74,22 +74,23 @@ void FileParser::print_components()
     for (size_t i = 0; i < data_manager.components.size(); ++i)
     {
         cout << "\t" << get_component_type(data_manager.components[i]) << endl;
+        cout << "\t\tDATAWIDTH = " << data_manager.components[i]->width << endl;
         auto begin = data_manager.components[i]->inputs.begin();
         auto end = data_manager.components[i]->inputs.end();
         for (auto j = begin; j != end; ++j)
         {
-            if (j->second != NULL)
+            if (j->second->connection != NULL)
             {
-                cout << "\t\t" << j->first << " = " << j->second->name << endl;
+                cout << "\t\t" << j->first << " = " << j->second->connection->name << endl;
             }
         }
         begin = data_manager.components[i]->outputs.begin();
         end = data_manager.components[i]->outputs.end();
         for (auto j = begin; j != end; ++j)
         {
-            if (j->second != NULL)
+            if (j->second->connection != NULL)
             {
-                cout << "\t\t" << j->first << " = " << j->second->name << endl;
+                cout << "\t\t" << j->first << " = " << j->second->connection->name << endl;
             }
         }
     }

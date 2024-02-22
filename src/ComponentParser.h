@@ -16,7 +16,9 @@ const regex REG_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*$"};
 const regex ADD_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*\\+\\s*(?!1)(\\w+)\\s*$"};
 const regex SUB_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*-\\s*(?!1)(\\w+)\\s*$"};
 const regex MUL_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*\\*\\s*(\\w+)\\s*$"};
-const regex COMP_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*(>|<|==)\\s*(\\w+)\\s*$"};
+const regex GT_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*>\\s*(\\w+)\\s*$"};
+const regex LT_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*<\\s*(\\w+)\\s*$"};
+const regex EQ_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*==\\s*(\\w+)\\s*$"};
 const regex MUX2x1_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s\\?\\s*(\\w+)\\s*:\\s*(\\w+)\\s*$"};
 const regex SHR_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*>>\\s*(\\w+)\\s*$"};
 const regex SHL_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*<<\\s*(\\w+)\\s*$"};
@@ -29,7 +31,7 @@ class ComponentParser;
 
 struct ParserTableEntry{
     regex r;
-    void (ComponentParser::*func)(smatch);
+    void (ComponentParser::*func)(vector<wire*> wires);
 };
 
 class ComponentParser
@@ -42,18 +44,20 @@ class ComponentParser
     private:
         ParserDataManager* data_manager; 
         vector<ParserTableEntry> PARSER_TABLE;
-        void parse_reg(smatch match);
-        void parse_add(smatch match);
-        void parse_sub(smatch match);
-        void parse_mul(smatch match);
-        void parse_comp(smatch match);
-        void parse_mux2x1(smatch match);
-        void parse_shr(smatch match);
-        void parse_shl(smatch match);
-        void parse_div(smatch match);
-        void parse_mod(smatch match);
-        void parse_inc(smatch match);
-        void parse_dec(smatch match);
+        void parse_reg(vector<wire*> wires);
+        void parse_add(vector<wire*> wires);
+        void parse_sub(vector<wire*> wires);
+        void parse_mul(vector<wire*> wires);
+        void parse_gt(vector<wire*> wires);
+        void parse_lt(vector<wire*> wires);
+        void parse_eq(vector<wire*> wires);
+        void parse_mux2x1(vector<wire*> wires);
+        void parse_shr(vector<wire*> wires);
+        void parse_shl(vector<wire*> wires);
+        void parse_div(vector<wire*> wires);
+        void parse_mod(vector<wire*> wires);
+        void parse_inc(vector<wire*> wires);
+        void parse_dec(vector<wire*> wires);
 };
 } // namespace Parser
 

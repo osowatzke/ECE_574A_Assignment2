@@ -20,14 +20,19 @@ struct wire
     vector<component*> src;
     vector<component*> dest;
 };
+struct port
+{
+    int width;
+    wire* connection;
+};
 enum ComponentType{REG,ADD,SUB,MUL,COMP,MUX2x1,SHR,SHL,DIV,MOD,INC,DEC};
 struct component
 {
     string name;
     ComponentType type;
     int width;
-    map<string, wire*> inputs;
-    map<string, wire*> outputs;
+    map<string, port*> inputs;
+    map<string, port*> outputs;
 };
 } // namespace Parser
 

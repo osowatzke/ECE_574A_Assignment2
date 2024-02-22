@@ -22,6 +22,12 @@ namespace Parser
         }
         for (size_t i = 0; i < components.size(); ++i)
         {
+            auto begin = components[i]->inputs.begin();
+            auto end = components[i]->inputs.end();
+            for (auto j = begin; j != end; ++j)
+            {
+                delete j->second;
+            }
             delete components[i];
         }
     }
