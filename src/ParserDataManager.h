@@ -13,6 +13,7 @@ class ParserDataManager
         vector<wire*> wires;
         vector<component*> components;
         ~ParserDataManager();
+        wire* create_wire(string name);
         wire* find_wire(string name);
 };
 } // namespace Parser
