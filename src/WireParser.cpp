@@ -1,14 +1,18 @@
 #include "WireParser.h"
 
-#include "ParserTypes.h"
+#include "DataManager.h"
+#include "DataTypes.h"
 
 #include <iostream>
 #include <regex>
 #include <vector>
 
+using namespace DataPathGen;
+using namespace std;
+
 namespace Parser
 {
-    WireParser::WireParser(ParserDataManager* data_manager)
+    WireParser::WireParser(DataManager* data_manager)
         : data_manager(data_manager) {}
     void WireParser::parse_line(string line)
     {

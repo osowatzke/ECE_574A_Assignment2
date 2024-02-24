@@ -1,15 +1,16 @@
 #include "ComponentParser.h"
 
-#include "ParserTypes.h"
+#include "DataTypes.h"
 
 #include <iostream>
 #include <vector>
 
+using namespace DataPathGen;
 using namespace std;
 
 namespace Parser
 {
-ComponentParser::ComponentParser(ParserDataManager* data_manager)
+ComponentParser::ComponentParser(DataManager* data_manager)
     : data_manager(data_manager)
 {
     ParserTableEntry REG_ENTRY;
@@ -364,4 +365,5 @@ void ComponentParser::parse_dec(vector<wire*> wires)
     dec->inputs["a"] = a;
     dec->outputs["d"] = d;
 }
+
 } // namespace Parser

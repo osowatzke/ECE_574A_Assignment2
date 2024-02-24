@@ -1,12 +1,13 @@
 #ifndef GUARD_ComponentParser_h
 #define GUARD_ComponentParser_h
 
-#include "ParserTypes.h"
-#include "ParserDataManager.h"
+#include "DataTypes.h"
+#include "DataManager.h"
 
 #include <regex>
 #include <vector>
 
+using namespace DataPathGen;
 using namespace std;
 
 namespace Parser
@@ -38,11 +39,11 @@ class ComponentParser
 {
     public:
         vector<component*> components;
-        ComponentParser(ParserDataManager* data_manager);
+        ComponentParser(DataManager* data_manager);
         void parse_line(string line);
         void parse_lines(vector<string> lines);
     private:
-        ParserDataManager* data_manager; 
+        DataManager* data_manager; 
         vector<ParserTableEntry> PARSER_TABLE;
         void parse_reg(vector<wire*> wires);
         void parse_add(vector<wire*> wires);
