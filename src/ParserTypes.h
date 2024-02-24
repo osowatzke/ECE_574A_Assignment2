@@ -25,7 +25,7 @@ struct port
     int width;
     wire* connection;
 };
-enum ComponentType{REG,ADD,SUB,MUL,COMP,MUX2x1,SHR,SHL,DIV,MOD,INC,DEC};
+enum ComponentType{REG,ADD,SUB,MUL,COMP,MUX2x1,SHR,SHL,DIV,MOD,INC,DEC,CAST};
 struct component
 {
     string name;

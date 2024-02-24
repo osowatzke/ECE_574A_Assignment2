@@ -12,15 +12,21 @@ namespace Parser
         std::regex pattern(name + "_\\d+");
 
         // Count of wires with the same base name
-        int nameInc = 0;
+        int nameInc = 1;
+        bool isMatch = true;
 
         // Loop through existing wires to find a unique name
-        for (size_t i = 0; i < wires.size(); ++i)
-        {
-            // If the name matches the base name or the pattern, increment the counter
-            if ((wires[i]->name == name) || (std::regex_search(wires[i]->name, pattern)))
+        
+        while(isMatch) {
+            isMatch = false;
+            for (size_t i = 0; i < wires.size(); ++i)
             {
-                nameInc += 1;
+                // If the name matches the base name or the pattern, increment the counter
+                if ((wires[i]->name == name) || ((nameInc > 0) && (wires[i]->name == (name + "_" + to_string(nameInc)))))
+                {
+                    isMatch = true;
+                    nameInc += 1;
+                }
             }
         }
 
