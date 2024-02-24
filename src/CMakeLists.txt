@@ -6,16 +6,18 @@ SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${OUTPUT_DIRECTORY}")
 SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${OUTPUT_DIRECTORY}")
 
 set(SOURCES
-    ParserDataManager.cpp
+    DataPathGenerator.cpp
+    DataManager.cpp
     WireParser.cpp
     ComponentParser.cpp 
     FileParser.cpp)
 
 set(HEADER_FILES
-    ParserTypes.h
-    ParserDataManager.h
+    DataPathGenerator.h
+    DataTypes.h
+    DataManager.h
     WireParser.h
     ComponentParser.h
     FileParser.h)
 
-add_executable(FileParser ${SOURCES} ${HEADER_FILES})
+add_executable(dpgen ${SOURCES} ${HEADER_FILES})
