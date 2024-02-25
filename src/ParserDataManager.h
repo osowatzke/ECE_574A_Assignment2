@@ -14,6 +14,8 @@ class ParserDataManager
         vector<component*> components;
         ~ParserDataManager();
         wire* create_wire(string name);
+        component* create_component(string name, ComponentType type, int width, bool sign);
+        string get_unique_name(string name);
         wire* find_wire(string name);
 };
 } // namespace Parser

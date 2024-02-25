@@ -75,7 +75,7 @@ void ComponentParser::parse_line(string line)
                 wires.push_back(data_manager->find_wire(match.str(j)));
                 if (j == 1)
                 {
-                    wires[j-1]->src.push_back(new_component);
+                    wires[j-1]->src = new_component;
                 }
                 else
                 {
@@ -407,5 +407,4 @@ void ComponentParser::parse_dec(vector<wire*> wires)
     dec->inputs["a"] = a;
     dec->outputs["d"] = d;
 }
-} // namespace Parser
 } // namespace Parser

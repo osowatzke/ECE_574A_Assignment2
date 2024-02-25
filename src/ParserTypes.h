@@ -17,7 +17,7 @@ struct wire
     WireType type;
     int width;
     bool sign;
-    vector<component*> src;
+    component* src;
     vector<component*> dest;
 };
 struct port
@@ -31,6 +31,7 @@ struct component
     string name;
     ComponentType type;
     int width;
+    bool sign;
     map<string, port*> inputs;
     map<string, port*> outputs;
 };
