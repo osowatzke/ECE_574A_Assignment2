@@ -34,9 +34,6 @@ namespace Parser
 
     string ParserDataManager::get_unique_name(string name)
     {
-        // Constructing the regular expression pattern to match names like "name_#"
-        std::regex pattern(name + "_\\d+");
-        
         // Count of wires with the same base name
         int nameInc = 1;
         bool isMatch = true;
