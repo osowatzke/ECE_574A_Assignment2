@@ -1,6 +1,9 @@
 #include "FileParser.h"
 
 #include "ComponentParser.h"
+#include "DataManager.h"
+#include "DataTypes.h"
+#include "WireParser.h"
 
 #include <fstream>
 #include <iostream>
@@ -12,10 +15,18 @@ using namespace std;
 
 namespace Parser{
 
-FileParser::FileParser()
-    : data_manager(ParserDataManager())
-    , wire_parser(WireParser(&data_manager))
-    , component_parser(ComponentParser(&data_manager)) {}
+FileParser::FileParser(DataManager* data_manager)
+    : data_manager(data_manager)
+    , wire_parser(WireParser(data_manager))
+    , component_parser(ComponentParser(data_manager)) {}
+
+void FileParser::run(string file_path)
+{
+    read_lines(file_path);
+    remove_comments();
+    parse_wires();
+    parse_components();
+}
 
 int FileParser::read_lines(string file_path)
 {
@@ -57,87 +68,4 @@ void FileParser::parse_components()
     component_parser.parse_lines(lines);
 }
 
-void FileParser::print_wires()
-{
-    cout << "WIRES:" << endl;
-    for (size_t i = 0; i < data_manager.wires.size(); ++i)
-    {
-        cout << "\t" << data_manager.wires[i]->name << endl;
-        cout << "\t\twidth = " << data_manager.wires[i]->width << endl;
-        cout << "\t\tsigned = " << data_manager.wires[i]->sign << endl;
-    }
-}
-
-void FileParser::print_components()
-{
-    cout << "COMPONENTS:" << endl;
-    for (size_t i = 0; i < data_manager.components.size(); ++i)
-    {
-        cout << "\t" << get_component_type(data_manager.components[i]) << endl;
-        cout << "\t\tDATAWIDTH = " << data_manager.components[i]->width << endl;
-        auto begin = data_manager.components[i]->inputs.begin();
-        auto end = data_manager.components[i]->inputs.end();
-        for (auto j = begin; j != end; ++j)
-        {
-            if (j->second->connection != NULL)
-            {
-                cout << "\t\t" << j->first << " = " << j->second->connection->name << endl;
-            }
-        }
-        begin = data_manager.components[i]->outputs.begin();
-        end = data_manager.components[i]->outputs.end();
-        for (auto j = begin; j != end; ++j)
-        {
-            if (j->second->connection != NULL)
-            {
-                cout << "\t\t" << j->first << " = " << j->second->connection->name << endl;
-            }
-        }
-    }
-}
-
-string FileParser::get_component_type(component* comp)
-{
-    switch (comp->type)
-    {
-        case ComponentType::REG:
-            return "REG";
-        case ComponentType::ADD:
-            return "ADD";
-        case ComponentType::SUB:
-            return "SUB";
-        case ComponentType::MUL:
-            return "MUL";
-        case ComponentType::COMP:
-            return "COMP";
-        case ComponentType::MUX2x1:
-            return "MUX2x1";
-        case ComponentType::SHR:
-            return "SHR";
-        case ComponentType::SHL:
-            return "SHL";
-        case ComponentType::DIV:
-            return "DIV";
-        case ComponentType::MOD:
-            return "MOD";
-        case ComponentType::INC:
-            return "INC";
-        case ComponentType::DEC:
-            return "DEC";
-        default:
-            return "";
-    }
-}
 } // namespace Parser
-
-int main(int argc, char** argv)
-{
-    Parser::FileParser file_parser;
-    file_parser.read_lines(argv[1]);
-    file_parser.remove_comments();
-    file_parser.parse_wires();
-    file_parser.parse_components();
-    file_parser.print_wires();
-    file_parser.print_components();
-    return 0;
-}

@@ -1,17 +1,16 @@
-#include "ParserDataManager.h"
-
 #include "ComponentParser.h"
 
-#include "ParserTypes.h"
+#include "DataTypes.h"
 
 #include <iostream>
 #include <vector>
 
+using namespace DataPathGen;
 using namespace std;
 
 namespace Parser
 {
-ComponentParser::ComponentParser(ParserDataManager* data_manager)
+ComponentParser::ComponentParser(DataManager* data_manager)
     : data_manager(data_manager)
 {
     ParserTableEntry REG_ENTRY;
@@ -93,47 +92,6 @@ void ComponentParser::parse_lines(vector<string> lines)
     for (size_t i = 0; i < lines.size(); ++i)
     {
         parse_line(lines[i]);
-    }
-
-    // TODO: Check this loop that iterates through all components, their ports, and the wires between components to update the port and wire widths if they are too small.
-    for (component* currComponent : data_manager->components) {
-        int componentWidth = currComponent->width;
-        for (auto& input : currComponent->inputs) {
-            if (input.second->width < componentWidth) {
-                input.second->width = componentWidth;
-                input.second->connection->width = componentWidth;
-            }
-        }
-        for (auto& output : currComponent->outputs) {
-            if (((output.second->connection->type == WireType::OUTPUT) || (output.second->connection->type == REGISTER))) {
-                for (auto& currWireDest : output.second->connection->dest) {
-                    if (currWireDest->type != ComponentType::REG) {
-                        // Create a new register component
-                        component* newComponent = new component;
-                        newComponent->type = ComponentType::REG;
-                        newComponent->width = output.second->connection->width;
-
-                        // Create a new wire for the register
-                        wire* newWire = data_manager->create_wire(output.second->connection->name);
-                        newWire->type = output.second->connection->type;
-
-                        // Create new input and output ports for the register component
-                        port* newPort = new port;
-                        newPort->width = output.second->connection->width;
-                        newPort->connection = newWire;
-                        newComponent->inputs.insert({"input", newPort});
-
-                        newPort = new port;
-                        newPort->width = output.second->connection->width;
-                        newPort->connection = output.second->connection;
-                        newComponent->outputs.insert({"output", newPort});
-
-                        // Add the new component to the data manager
-                        components.push_back(newComponent);
-                    }
-                }
-            }
-        }
     }
 }
 void ComponentParser::parse_reg(vector<wire*> wires)
@@ -407,4 +365,5 @@ void ComponentParser::parse_dec(vector<wire*> wires)
     dec->inputs["a"] = a;
     dec->outputs["d"] = d;
 }
+
 } // namespace Parser

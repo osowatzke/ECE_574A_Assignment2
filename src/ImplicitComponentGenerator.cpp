@@ -1,31 +1,33 @@
 #include "ImplicitComponentGenerator.h"
-#include "ParserDataManager.h"
-#include "ParserTypes.h"
+#include "ComponentParser.h"
+#include "DataManager.h"
+#include "DataTypes.h"
 
-namespace Parser
+namespace DataPathGen
 {
-    void ImplicitComponentGenerator::run(ParserDataManager* data_manager)
+    void ImplicitComponentGenerator::run(DataManager* data_manager)
     {
         generate_implicit_casts(data_manager);
         generate_implicit_registers(data_manager);
         name_all_components(data_manager);
     }
 
-    void ImplicitComponentGenerator::cast_wire(ParserDataManager* data_manager, wire* currWire)
+    void ImplicitComponentGenerator::cast_wire(DataManager* data_manager, wire* currWire)
     {
         // Iterate through all destination components of the current wire
         for (component*& currComponent : currWire->dest) {
             // Check if there is a width or sign mismatch between the source wire and the current destination component
             if ((currWire->src->width != currComponent->width) || (currWire->src->sign != currComponent->sign)) {
-                // Create a new cast component
-                component* newCastComponent = data_manager->create_component("cast", ComponentType::CAST, currComponent->width, currComponent->sign);
-
                 // Create a new wire for the cast operation if it doesn't already exist
-                wire* newWire = data_manager->create_wire(("cast_" + currWire->name));
+                wire* newWire = data_manager->create_wire(data_manager->get_unique_name("cast_" + currWire->name));
                 // Set the properties of the new wire
                 newWire->sign = currComponent->sign;
                 newWire->type = WireType::WIRE;
                 newWire->width = currComponent->width;
+                
+                // Create a new cast component
+                component* newCastComponent = data_manager->create_cast(currComponent->width, currComponent->sign, {currWire, newWire});
+                
                 // Connect the new cast component to the new wire
                 newWire->src = newCastComponent;
                 // Connect the current destination component to the new wire
@@ -37,17 +39,14 @@ namespace Parser
         }
     }
 
-    void ImplicitComponentGenerator::generate_implicit_registers(ParserDataManager* data_manager)
+    void ImplicitComponentGenerator::generate_implicit_registers(DataManager* data_manager)
     {
         // Iterate through all wires in the data manager
         for (wire*& currWire : data_manager->wires) {
             // Check if the wire is of type OUTPUT or REGISTER and its source is not a register
             if (((currWire->type == WireType::OUTPUT) || (currWire->type == WireType::REGISTER)) && (currWire->src->type != ComponentType::REG)) {
-                // Create a new register component
-                component* newRegComponent = data_manager->create_component("reg", ComponentType::REG, currWire->src->width, currWire->src->sign);
-
                 // Create a new wire for the cast operation if it doesn't already exist
-                wire* newWire = data_manager->create_wire(("cast_" + currWire->src->name));
+                wire* newWire = data_manager->create_wire(data_manager->get_unique_name("reg_" + currWire->src->name));
                 // Set the properties of the new wire
                 newWire->sign = currWire->src->sign;
                 newWire->type = WireType::WIRE;
@@ -55,6 +54,10 @@ namespace Parser
                 
                 // Connect the new wire to the source wire
                 newWire->src = currWire->src;
+
+                // Create a new reg component
+                component* newRegComponent = data_manager->create_reg(currWire->src->width, currWire->src->sign, {currWire, newWire});
+
                 // Connect the new register component to the new wire
                 newWire->dest.push_back(newRegComponent);
 
@@ -64,7 +67,7 @@ namespace Parser
         }
     }
 
-    void ImplicitComponentGenerator::generate_implicit_casts(ParserDataManager* data_manager)
+    void ImplicitComponentGenerator::generate_implicit_casts(DataManager* data_manager)
     {
         // Iterate through all wires in the data manager
         for (wire*& currWire : data_manager->wires) {
@@ -72,7 +75,7 @@ namespace Parser
         }
     }
 
-    void ImplicitComponentGenerator::name_all_components(ParserDataManager* data_manager)
+    void ImplicitComponentGenerator::name_all_components(DataManager* data_manager)
     {
         // Iterate through all components in the data manager
         for (component*& currComponent : data_manager->components) {
