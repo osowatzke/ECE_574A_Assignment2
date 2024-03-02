@@ -156,6 +156,37 @@ namespace Writer
         }
         circuitFile << endl;
     }
+    void FileWriter::declareComponents()
+    {
+        for (component*& currComponent : data_manager->components)
+        {
+            if (currComponent->type != ComponentType::CAST)
+            {
+                string componentType = ComponentTypeToStr(currComponent->type);
+                if (currComponent->sign)
+                {
+                    componentType = "S" + componentType;
+                }
+                circuitFile << "    " << componentType;
+                circuitFile << " #(.DATAWIDTH(" << currComponent->width << ")) ";
+                circuitFile << currComponent->name << "(";
+                auto begin = currComponent->inputs.begin();
+                auto end = currComponent->inputs.end();
+                bool firstWire = true;
+                for (auto it = begin; it != end; ++it)
+                {
+                    if (!firstWire)
+                    {
+                        circuitFile << ", ";
+                    }
+                    firstWire = false;
+                    circuitFile << "." << it->first << "(" << it->second->connection->name << ")";
+                }
+                circuitFile << ");" << endl;
+            }
+        }
+        circuitFile << endl;
+    }
     void FileWriter::run(string filePath)
     {
         openFile (filePath);
@@ -165,6 +196,7 @@ namespace Writer
         declareOutputs();
         declareWires();
         declareCasts();
+        declareComponents();
         terminateModule();
         closeFile ();
     }
