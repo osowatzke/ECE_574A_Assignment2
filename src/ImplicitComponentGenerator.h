@@ -21,6 +21,6 @@ class ImplicitComponentGenerator
         void name_all_components();
         string ComponentNameToString(ComponentType type);
 };
-} // namespace Parser
+} // namespace DataPathGen
 
 #endif // GUARD_ImplicitComponentGenerator_h
