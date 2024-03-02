@@ -103,9 +103,12 @@ void ComponentParser::parse_reg(vector<port*> ports)
     reg->type = ComponentType::REG;
     port* d = ports[1];
     port* q = ports[0];
-    reg->width = d->connection->width;
+    reg->width = q->connection->width;
+    reg->sign = q->connection->sign;
     d->width = reg->width;
+    d->sign = reg->sign;
     q->width = reg->width;
+    q->sign = reg->sign;
     reg->inputs["d"] = d;
     reg->outputs["q"] = q;
 }
@@ -117,9 +120,13 @@ void ComponentParser::parse_add(vector<port*> ports)
     port* b = ports[2];
     port* sum = ports[0];
     add->width = sum->connection->width;
+    add->sign = sum->connection->sign;
     a->width = add->width;
+    a->sign = add->sign;
     b->width = add->width;
+    b->sign = add->sign;
     sum->width = add->width;
+    sum->sign = add->sign;
     add->inputs["a"] = a;
     add->inputs["b"] = b;
     add->outputs["sum"] = sum;
@@ -132,9 +139,13 @@ void ComponentParser::parse_sub(vector<port*> ports)
     port* b = ports[2];
     port* diff = ports[0];
     sub->width = diff->connection->width;
+    sub->sign = diff->connection->sign;
     a->width = sub->width;
+    a->sign = sub->sign;
     b->width = sub->width;
+    b->sign = sub->sign;
     diff->width = sub->width;
+    diff->sign = sub->sign;
     sub->inputs["a"] = a;
     sub->inputs["b"] = b;
     sub->outputs["diff"] = diff;
@@ -147,9 +158,13 @@ void ComponentParser::parse_mul(vector<port*> ports)
     port* b = ports[2];
     port* prod = ports[0];
     mul->width = prod->connection->width;
+    mul->sign = prod->connection->sign;
     a->width = mul->width;
+    a->sign = mul->sign;
     b->width = mul->width;
+    b->sign = mul->sign;
     prod->width = mul->width;
+    prod->sign = mul->sign;
     mul->inputs["a"] = a;
     mul->inputs["b"] = b;
     mul->outputs["prod"] = prod;
@@ -161,23 +176,17 @@ void ComponentParser::parse_gt(vector<port*> ports)
     port* a = ports[1];
     port* b = ports[2];
     port* gt = ports[0];
-    port* lt = new port;
-    port* eq = new port;
-    lt->parent = comp;
-    lt->connection = NULL;
-    eq->parent = comp;
-    eq->connection = NULL;
     comp->width = max(a->connection->width, b->connection->width);
+    comp->sign = a->connection->sign | b->connection->sign;
     a->width = comp->width;
+    a->sign = comp->sign;
     b->width = comp->width;
+    b->sign = comp->sign;
     gt->width = 1;
-    lt->width = 1;
-    eq->width = 1;
+    gt->sign = 0;
     comp->inputs["a"] = a;
     comp->inputs["b"] = b;
     comp->outputs["gt"] = gt;
-    comp->outputs["lt"] = lt;
-    comp->outputs["eq"] = eq;
 }
 
 void ComponentParser::parse_lt(vector<port*> ports)
@@ -187,23 +196,17 @@ void ComponentParser::parse_lt(vector<port*> ports)
     port* a = ports[1];
     port* b = ports[2];
     port* lt = ports[0];
-    port* gt = new port;
-    port* eq = new port;
-    gt->parent = comp;
-    gt->connection = NULL;
-    eq->parent = comp;
-    eq->connection = NULL;
     comp->width = max(a->connection->width, b->connection->width);
+    comp->sign = a->connection->sign | b->connection->sign;
     a->width = comp->width;
+    a->sign = comp->sign;
     b->width = comp->width;
-    gt->width = 1;
+    b->sign = comp->sign;
     lt->width = 1;
-    eq->width = 1;
+    lt->sign = 0;
     comp->inputs["a"] = a;
     comp->inputs["b"] = b;
-    comp->outputs["gt"] = gt;
     comp->outputs["lt"] = lt;
-    comp->outputs["eq"] = eq;
 }
 
 void ComponentParser::parse_eq(vector<port*> ports)
@@ -213,21 +216,16 @@ void ComponentParser::parse_eq(vector<port*> ports)
     port* a = ports[1];
     port* b = ports[2];
     port* eq = ports[0];
-    port* gt = new port;
-    port* lt = new port;
-    gt->parent = comp;
-    gt->connection = NULL;
-    lt->parent = comp;
     comp->width = max(a->connection->width, b->connection->width);
+    comp->sign = a->connection->sign | b->connection->sign;
     a->width = comp->width;
+    a->sign = comp->sign;
     b->width = comp->width;
-    gt->width = 1;
-    lt->width = 1;
+    b->sign = comp->sign;
     eq->width = 1;
+    eq->sign = 0;
     comp->inputs["a"] = a;
     comp->inputs["b"] = b;
-    comp->outputs["gt"] = gt;
-    comp->outputs["lt"] = lt;
     comp->outputs["eq"] = eq;
 }
 
@@ -240,10 +238,15 @@ void ComponentParser::parse_mux2x1(vector<port*> ports)
     port* a = ports[3];
     port* d = ports[0];
     mux2x1->width = d->connection->width;
+    mux2x1->sign = d->connection->sign;
     sel->width = 1;
+    sel->sign = 0;
     b->width = mux2x1->width;
+    b->sign = mux2x1->sign;
     a->width = mux2x1->width;
+    a->sign = mux2x1->sign;
     d->width = mux2x1->width;
+    d->sign = mux2x1->sign;
     mux2x1->inputs["sel"] = sel;
     mux2x1->inputs["b"] = b;
     mux2x1->inputs["a"] = a;
@@ -257,9 +260,13 @@ void ComponentParser::parse_shr(vector<port*> ports)
     port* sh_amt = ports[2];
     port* d = ports[0];
     shr->width = d->connection->width;
+    shr->sign = d->connection->sign;
     a->width = shr->width;
+    a->sign = shr->sign;
     sh_amt->width = shr->width;
+    sh_amt->sign = 0;
     d->width = shr->width;
+    d->sign = shr->sign;
     shr->inputs["a"] = a;
     shr->inputs["sh_amt"] = sh_amt;
     shr->outputs["d"] = d;
@@ -272,9 +279,13 @@ void ComponentParser::parse_shl(vector<port*> ports)
     port* sh_amt = ports[2];
     port* d = ports[0];
     shl->width = d->connection->width;
+    shl->sign = d->connection->sign;
     a->width = shl->width;
+    a->sign = shl->sign;
     sh_amt->width = shl->width;
+    sh_amt->sign = 0;
     d->width = shl->width;
+    d->sign = shl->sign;
     shl->inputs["a"] = a;
     shl->inputs["sh_amt"] = sh_amt;
     shl->outputs["d"] = d;
@@ -287,9 +298,13 @@ void ComponentParser::parse_div(vector<port*> ports)
     port* b = ports[2];
     port* qout = ports[0];
     div->width = qout->connection->width;
+    div->sign = qout->connection->sign;
     a->width = div->width;
+    a->sign = div->sign;
     b->width = div->width;
+    b->sign = b->sign;
     qout->width = div->width;
+    qout->sign = div->sign;
     div->inputs["a"] = a;
     div->inputs["b"] = b;
     div->outputs["qout"] = qout;
@@ -302,9 +317,13 @@ void ComponentParser::parse_mod(vector<port*> ports)
     port* b = ports[2];
     port* rem = ports[0];
     mod->width = rem->connection->width;
+    mod->sign = rem->connection->sign;
     a->width = mod->width;
+    a->sign = mod->sign;
     b->width = mod->width;
+    b->sign = mod->sign;
     rem->width = mod->width;
+    rem->sign = mod->sign;
     mod->inputs["a"] = a;
     mod->inputs["b"] = b;
     mod->outputs["rem"] = rem;
@@ -316,8 +335,11 @@ void ComponentParser::parse_inc(vector<port*> ports)
     port* a = ports[1];
     port* d = ports[0];
     inc->width = d->connection->width;
+    inc->sign = d->connection->sign;
     a->width = inc->width;
+    a->sign = inc->sign;
     d->width = inc->width;
+    d->sign = inc->sign;
     inc->inputs["a"] = a;
     inc->outputs["d"] = d;
 }
@@ -328,8 +350,11 @@ void ComponentParser::parse_dec(vector<port*> ports)
     port* a = ports[1];
     port* d = ports[0];
     dec->width = d->connection->width;
+    dec->sign = d->connection->sign;
     a->width = dec->width;
+    a->sign = dec->sign;
     d->width = dec->width;
+    d->sign = dec->sign;
     dec->inputs["a"] = a;
     dec->outputs["d"] = d;
 }

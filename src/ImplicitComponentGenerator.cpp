@@ -14,7 +14,7 @@ namespace DataPathGen
     void ImplicitComponentGenerator::run()
     {
         generate_implicit_casts();
-        // generate_implicit_registers();
+        generate_implicit_registers();
         // name_all_components();
     }
 
@@ -25,7 +25,7 @@ namespace DataPathGen
         for (size_t i = 0; i < currWire->dest.size(); ++ i){ //component*& currComponent : currWire->dest) {
             port * currPort = currWire->dest[i];
             // Check if there is a width or sign mismatch between the source wire and the current destination component
-            if ((currWire->type != WireType::INPUT) && ((currWire->src->width != currPort->width) || (currWire->src->sign != currPort->sign))) {
+            if ((currWire->type != WireType::INPUT) && ((currWire->width != currPort->width) || (currWire->sign != currPort->sign))) {
 
                 // Create a new wire for the cast operation if it doesn't already exist
                 cout << "Trying to create a wire" << endl;
@@ -68,7 +68,7 @@ namespace DataPathGen
             // Check if the wire is of type OUTPUT or REGISTER and its source is not a register
             if (((currWire->type == WireType::OUTPUT) || (currWire->type == WireType::REGISTER)) && (currWire->src->parent->type != ComponentType::REG)) {
                 // Create a new wire for the cast operation if it doesn't already exist
-                wire* newWire = data_manager->create_wire(data_manager->get_unique_name("reg_" + currWire->name));
+                wire* newWire = data_manager->create_wire("reg_" + currWire->name);
                 // Set the properties of the new wire
                 newWire->sign = currWire->src->sign;
                 newWire->type = WireType::WIRE;

@@ -25,8 +25,8 @@ namespace DataPathGen
         reg->type = ComponentType::REG;
         port* d = new port;
         port* q = new port;
-        d->connection = wires[1];
-        q->connection = wires[0];
+        d->connection = wires[0];
+        q->connection = wires[1];
         d->parent = reg;
         q->parent = reg;
         reg->width = width;
@@ -46,14 +46,14 @@ namespace DataPathGen
         cast->type = ComponentType::CAST;
         port* in = new port;
         port* out = new port;
-        in->connection = wires[1];
-        out->connection = wires[0];
+        in->connection = wires[0];
+        out->connection = wires[1];
         in->parent = cast;
         out->parent = cast;
         cast->width = width;
         cast->sign = sign;
-        in->width = cast->width;
-        out->width = cast->width;
+        in->width = in->connection->width;
+        out->width = out->connection->width;
         cast->inputs["in"] = in;
         cast->outputs["out"] = out;
 
