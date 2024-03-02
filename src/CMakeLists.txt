@@ -19,6 +19,7 @@ set(HEADER_FILES
     DataTypes.h
     DataManager.h    
     FileParser.h
+    ImplicitComponentGenerator.h
     WireParser.h)
 
 add_executable(dpgen ${SOURCES} ${HEADER_FILES})

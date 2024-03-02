@@ -8,9 +8,9 @@
             "name": "Debug File Parser",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/src/FileParser.exe",
+            "program": "${workspaceFolder}/build/src/dpgen.exe",
             "args": ["${workspaceFolder}/circuits/474a_circuit1.txt"],
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}/src"
         }
     ]
 }

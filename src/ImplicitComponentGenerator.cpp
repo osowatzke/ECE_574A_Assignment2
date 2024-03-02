@@ -2,24 +2,30 @@
 #include "ComponentParser.h"
 #include "DataManager.h"
 #include "DataTypes.h"
+#include <iostream>
+
+using namespace std;
 
 namespace DataPathGen
 {
-    void ImplicitComponentGenerator::run(DataManager* data_manager)
+    ImplicitComponentGenerator::ImplicitComponentGenerator(DataManager* data_manager)
+        : data_manager(data_manager) {}
+
+    void ImplicitComponentGenerator::run()
     {
-        generate_implicit_casts(data_manager);
-        generate_implicit_registers(data_manager);
-        name_all_components(data_manager);
+        generate_implicit_casts();
+        // generate_implicit_registers();
+        // name_all_components();
     }
 
-    void ImplicitComponentGenerator::cast_wire(DataManager* data_manager, wire* currWire)
+    void ImplicitComponentGenerator::cast_wire(wire* currWire)
     {
         // Iterate through all destination components of the current wire
         for (component*& currComponent : currWire->dest) {
             // Check if there is a width or sign mismatch between the source wire and the current destination component
-            if ((currWire->src->width != currComponent->width) || (currWire->src->sign != currComponent->sign)) {
+            if ((currWire->type != WireType::INPUT) && ((currWire->src->width != currComponent->width) || (currWire->src->sign != currComponent->sign))) {
                 // Create a new wire for the cast operation if it doesn't already exist
-                wire* newWire = data_manager->create_wire(data_manager->get_unique_name("cast_" + currWire->name));
+                wire* newWire = data_manager->create_wire("cast_" + currWire->name);
                 // Set the properties of the new wire
                 newWire->sign = currComponent->sign;
                 newWire->type = WireType::WIRE;
@@ -39,7 +45,7 @@ namespace DataPathGen
         }
     }
 
-    void ImplicitComponentGenerator::generate_implicit_registers(DataManager* data_manager)
+    void ImplicitComponentGenerator::generate_implicit_registers()
     {
         // Iterate through all wires in the data manager
         for (wire*& currWire : data_manager->wires) {
@@ -67,52 +73,21 @@ namespace DataPathGen
         }
     }
 
-    void ImplicitComponentGenerator::generate_implicit_casts(DataManager* data_manager)
+    void ImplicitComponentGenerator::generate_implicit_casts()
     {
         // Iterate through all wires in the data manager
-        for (wire*& currWire : data_manager->wires) {
-            ImplicitComponentGenerator::cast_wire(data_manager, currWire);
+        vector<wire*> initialWires;
+        copy(data_manager->wires.begin(), data_manager->wires.end(), back_inserter(initialWires));
+        for (wire* & currWire : initialWires) {
+            ImplicitComponentGenerator::cast_wire(currWire);
         }
     }
 
-    void ImplicitComponentGenerator::name_all_components(DataManager* data_manager)
+    void ImplicitComponentGenerator::name_all_components()
     {
         // Iterate through all components in the data manager
         for (component*& currComponent : data_manager->components) {
-            currComponent->name = data_manager->get_unique_name(ComponentNameToString(currComponent->type));
+            currComponent->name = data_manager->get_unique_name(ComponentTypeToStr(currComponent->type));
         }
-    }
-
-    string ImplicitComponentGenerator::ComponentNameToString(ComponentType type)
-    {
-        switch (type) {
-            case ComponentType::REG:
-                return "REG";
-            case ComponentType::ADD:
-                return "ADD";
-            case ComponentType::SUB:
-                return "SUB";
-            case ComponentType::MUL:
-                return "MUL";
-            case ComponentType::COMP:
-                return "COMP";
-            case ComponentType::MUX2x1:
-                return "MUX2x1";
-            case ComponentType::SHR:
-                return "SHR";
-            case ComponentType::SHL:
-                return "SHL";
-            case ComponentType::DIV:
-                return "DIV";
-            case ComponentType::MOD:
-                return "MOD";
-            case ComponentType::INC:
-                return "INC";
-            case ComponentType::DEC:
-                return "DEC";
-            case ComponentType::CAST:
-                return "CAST";
-        }
-        return "UNKNOWN"; // Return "UNKNOWN" for invalid enumerator
     }
 } // namespace Parser
