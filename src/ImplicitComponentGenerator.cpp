@@ -12,15 +12,29 @@ namespace DataPathGen
 
     void ImplicitComponentGenerator::run()
     {
+        fix_single_bit_wires();
         generate_implicit_casts();
         generate_implicit_registers();
         name_all_components();
     }
 
+    void ImplicitComponentGenerator::fix_single_bit_wires()
+    {
+        // Loop through all wires
+        for (wire*& currWire : data_manager->wires)
+        {
+            // Ensure single bit wires are unsigned
+            if (currWire->width == 1)
+            {
+                currWire->sign = 0;
+            }
+        }
+    }
+
     void ImplicitComponentGenerator::cast_wire(wire* currWire)
     {
         // Iterate through all destination components of the current wire
-        for (port* & currPort : currWire->dest)
+        for (port*& currPort : currWire->dest)
         {
             // Check if there is a width or sign mismatch between the source wire and the current destination port
             if ((currWire->width != currPort->width) || (currWire->sign != currPort->sign)) {
