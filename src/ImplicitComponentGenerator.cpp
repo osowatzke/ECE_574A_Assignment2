@@ -15,7 +15,7 @@ namespace DataPathGen
     {
         generate_implicit_casts();
         generate_implicit_registers();
-        // name_all_components();
+        name_all_components();
     }
 
     void ImplicitComponentGenerator::cast_wire(wire* currWire)
@@ -102,9 +102,19 @@ namespace DataPathGen
 
     void ImplicitComponentGenerator::name_all_components()
     {
+        int componentCount[NUM_COMPONENT_TYPES][2] = {0};
         // Iterate through all components in the data manager
         for (component*& currComponent : data_manager->components) {
-            currComponent->name = data_manager->get_unique_name(ComponentTypeToStr(currComponent->type));
+            int idx = ComponentTypeToInt(currComponent->type);
+            currComponent->name = ComponentTypeToStr(currComponent->type);
+            if (currComponent->sign = 1) {
+                currComponent->name = "S" + currComponent->name;
+                currComponent->name += to_string(componentCount[idx][1]);
+                ++componentCount[idx][1];
+            } else {
+                currComponent->name += to_string(componentCount[idx][0]);
+                ++componentCount[idx][0];
+            }
         }
     }
 } // namespace Parser

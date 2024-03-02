@@ -119,8 +119,10 @@ void DataManager::print_components()
     cout << "COMPONENTS:" << endl;
     for (size_t i = 0; i < components.size(); ++i)
     {
-        cout << "\t" << ComponentTypeToStr(components[i]->type) << endl;
-        cout << "\t\tDATAWIDTH = " << components[i]->width << endl;
+        cout << "\t" << components[i]->name << endl;
+        cout << "\t\ttype = " << ComponentTypeToStr(components[i]->type) << endl;
+        cout << "\t\tsigned = " << components[i]->sign << endl;
+        cout << "\t\tdatawidth = " << components[i]->width << endl;
         auto begin = components[i]->inputs.begin();
         auto end = components[i]->inputs.end();
         for (auto j = begin; j != end; ++j)
