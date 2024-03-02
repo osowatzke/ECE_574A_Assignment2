@@ -3,10 +3,9 @@
 #include "DataManager.h"
 #include "FileParser.h"
 
-using namespace DataPathGen;
 using namespace Parser;
 
-namespace Parser
+namespace DataPathGen
 {
 
 DataPathGenerator::DataPathGenerator()

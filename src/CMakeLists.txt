@@ -10,7 +10,8 @@ set(SOURCES
     DataManager.cpp
     WireParser.cpp
     ComponentParser.cpp 
-    FileParser.cpp)
+    FileParser.cpp
+    ImplicitComponentGenerator.cpp)
 
 set(HEADER_FILES
     DataPathGenerator.h
@@ -18,6 +19,7 @@ set(HEADER_FILES
     DataManager.h
     WireParser.h
     ComponentParser.h
-    FileParser.h)
+    FileParser.h
+    ImplicitComponentGenerator.h)
 
 add_executable(dpgen ${SOURCES} ${HEADER_FILES})

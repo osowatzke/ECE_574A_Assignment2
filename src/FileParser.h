@@ -21,6 +21,7 @@ namespace Parser
             DataManager* data_manager;
             WireParser wire_parser;
             ComponentParser component_parser;
+            ImplicitComponentGenerator component_generator;
             vector<string> lines;
             int read_lines(string file_path);
             void remove_comments();

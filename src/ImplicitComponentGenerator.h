@@ -11,12 +11,14 @@ namespace DataPathGen
 class ImplicitComponentGenerator
 {
     public:
-        void run(DataManager* data_manager);
+        void run();
+        ImplicitComponentGenerator(DataManager* data_manager);
     private:
-        void cast_wire(DataManager* data_manager, wire* wire);
-        void generate_implicit_registers(DataManager* data_manager);
-        void generate_implicit_casts(DataManager* data_manager);
-        void name_all_components(DataManager* data_manager);
+        DataManager* data_manager;
+        void cast_wire(wire* wire);
+        void generate_implicit_registers();
+        void generate_implicit_casts();
+        void name_all_components();
         string ComponentNameToString(ComponentType type);
 };
 } // namespace Parser

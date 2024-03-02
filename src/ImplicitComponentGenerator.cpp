@@ -5,14 +5,20 @@
 
 namespace DataPathGen
 {
-    void ImplicitComponentGenerator::run(DataManager* data_manager)
+    
+    ImplicitComponentGenerator::ImplicitComponentGenerator(DataManager* data_manager)
+        : data_manager(data_manager)
     {
-        generate_implicit_casts(data_manager);
-        generate_implicit_registers(data_manager);
-        name_all_components(data_manager);
+    }
+    
+    void ImplicitComponentGenerator::run()
+    {
+        generate_implicit_casts();
+        generate_implicit_registers();
+        name_all_components();
     }
 
-    void ImplicitComponentGenerator::cast_wire(DataManager* data_manager, wire* currWire)
+    void ImplicitComponentGenerator::cast_wire(wire* currWire)
     {
         // Iterate through all destination components of the current wire
         for (component*& currComponent : currWire->dest) {
@@ -39,7 +45,7 @@ namespace DataPathGen
         }
     }
 
-    void ImplicitComponentGenerator::generate_implicit_registers(DataManager* data_manager)
+    void ImplicitComponentGenerator::generate_implicit_registers()
     {
         // Iterate through all wires in the data manager
         for (wire*& currWire : data_manager->wires) {
@@ -67,15 +73,15 @@ namespace DataPathGen
         }
     }
 
-    void ImplicitComponentGenerator::generate_implicit_casts(DataManager* data_manager)
+    void ImplicitComponentGenerator::generate_implicit_casts()
     {
         // Iterate through all wires in the data manager
         for (wire*& currWire : data_manager->wires) {
-            ImplicitComponentGenerator::cast_wire(data_manager, currWire);
+            ImplicitComponentGenerator::cast_wire(currWire);
         }
     }
 
-    void ImplicitComponentGenerator::name_all_components(DataManager* data_manager)
+    void ImplicitComponentGenerator::name_all_components()
     {
         // Iterate through all components in the data manager
         for (component*& currComponent : data_manager->components) {
