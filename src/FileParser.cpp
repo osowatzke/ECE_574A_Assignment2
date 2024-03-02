@@ -1,5 +1,6 @@
 #include "FileParser.h"
 
+#include "ImplicitComponentGenerator.h"
 #include "ComponentParser.h"
 #include "DataManager.h"
 #include "DataTypes.h"
@@ -18,7 +19,8 @@ namespace Parser{
 FileParser::FileParser(DataManager* data_manager)
     : data_manager(data_manager)
     , wire_parser(WireParser(data_manager))
-    , component_parser(ComponentParser(data_manager)) {}
+    , component_parser(ComponentParser(data_manager))
+    , component_generator(ImplicitComponentGenerator(data_manager)) {}
 
 void FileParser::run(string file_path)
 {
@@ -26,6 +28,7 @@ void FileParser::run(string file_path)
     remove_comments();
     parse_wires();
     parse_components();
+    component_generator.run();
 }
 
 int FileParser::read_lines(string file_path)

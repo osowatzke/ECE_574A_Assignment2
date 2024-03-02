@@ -22,8 +22,7 @@ namespace DataPathGen
     {
         // cout << "Creating Cast for " << currWire->name << endl;
         // Iterate through all destination components of the current wire
-        for (size_t i = 0; i < currWire->dest.size(); ++ i){ //component*& currComponent : currWire->dest) {
-            port * currPort = currWire->dest[i];
+        for (port* & currPort : currWire->dest){ //component*& currComponent : currWire->dest) {
             // Check if there is a width or sign mismatch between the source wire and the current destination component
             if ((currWire->type != WireType::INPUT) && ((currWire->width != currPort->width) || (currWire->sign != currPort->sign))) {
 
@@ -52,7 +51,7 @@ namespace DataPathGen
 
                 // Update the destination component to point to the new cast component
                 // currComponent = newCastComponent;
-                currWire->dest[i] = newCastComponent->inputs["in"];
+                currPort = newCastComponent->inputs["in"];
 
                 //cout << currWire->dest.size() << endl;
             }
