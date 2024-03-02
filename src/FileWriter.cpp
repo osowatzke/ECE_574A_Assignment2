@@ -101,6 +101,61 @@ namespace Writer
         }
         circuitFile << endl;
     }
+    void FileWriter::declareCasts()
+    {
+        for (component*& currComponent : data_manager->components)
+        {
+            if (currComponent->type == ComponentType::CAST)
+            {
+                wire* output = currComponent->outputs["out"]->connection;
+                wire* input = currComponent->inputs["in"]->connection;
+                circuitFile << "    assign " << output->name << " = ";
+                if (output->sign != input->sign)
+                {
+                    if (output->sign)
+                    {
+                        circuitFile << "$signed(";
+                    }
+                    else
+                    {
+                        circuitFile << "$unsigned(";
+                    }
+                }
+                if (output->width != input->width)
+                {
+                    if (output->width > input->width)
+                    {
+                        int numBitsToAdd = output->width - input->width;
+                        if (input->sign)
+                        {
+                            circuitFile << "{{" << numBitsToAdd << "{" << input->name << "[" << input->width - 1 << "]}}, " << input->name << "}";
+                        }
+                        else
+                        {
+                            circuitFile << "{{" << numBitsToAdd << "{1'b0}}, " << input->name << "}";
+                        }
+                    }
+                    else
+                    {
+                        circuitFile << input->name << "[" << output->width-1 << ":0]";
+                    }
+                }
+                else
+                {
+                    circuitFile << input->name;
+                }
+                if (output->sign != input->sign)
+                {
+                    circuitFile << ");" << endl;
+                }
+                else
+                {
+                    circuitFile << ";" << endl;
+                }
+            }
+        }
+        circuitFile << endl;
+    }
     void FileWriter::run(string filePath)
     {
         openFile (filePath);
@@ -109,6 +164,7 @@ namespace Writer
         declareInputs();
         declareOutputs();
         declareWires();
+        declareCasts();
         terminateModule();
         closeFile ();
     }

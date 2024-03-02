@@ -27,6 +27,7 @@ namespace Writer
             void declareInputs();
             void declareOutputs();
             void declareWires();
+            void declareCasts();
     };
 }
 
