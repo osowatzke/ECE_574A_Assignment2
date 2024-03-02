@@ -11,6 +11,10 @@ namespace Writer
     {
         int startIdx = filePath.find_last_of("/\\") + 1;
         int endIdx = filePath.find_last_of(".");
+        if (endIdx < 0)
+        {
+            endIdx = filePath.length();
+        }
         string fileName = filePath.substr(startIdx, endIdx-startIdx);
         if ((fileName.substr(0,5) == "474a_") || (fileName.substr(0,5) == "574a_"))
         {

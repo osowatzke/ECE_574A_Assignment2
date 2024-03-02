@@ -40,6 +40,6 @@ where <circuit_name> is the name of the circuit you wish to parse and the <outpu
 
 ### Debugging the code
 
-Refer to launch.json in the .vscode directory. It is currently configured to debug "474a_circuit1.txt". However, the launch.json file can be modified to support debugging of any parsing run.
+Refer to launch.json in the .vscode directory. It is currently configured to debug "474a_circuit1.txt". However, the launch.json file can be modified to support debugging of any data path generator run.
 
-To debug, click on the Run and Debug tab and hit the play button to start a "Debug File Parser" run.
+To debug, click on the Run and Debug tab and hit the play button to start a "Debug Data Path Generator" run.
