@@ -19,7 +19,7 @@ class DataPathGenerator
     private:
         DataManager data_manager;
         FileParser file_parser;
-        ImplicitComponentGenerator implicit_component_generator;
+        ImplicitComponentGenerator component_generator;
         FileWriter file_writer;
 };
 } // namespace DataPathGen;
