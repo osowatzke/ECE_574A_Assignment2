@@ -1,6 +1,7 @@
 #ifndef GUARD_FileParser_h
 #define GUARD_FileParser_h
 
+#include "ImplicitComponentGenerator.h"
 #include "ComponentParser.h"
 #include "DataManager.h"
 #include "DataTypes.h"
@@ -21,6 +22,7 @@ namespace Parser
             DataManager* data_manager;
             WireParser wire_parser;
             ComponentParser component_parser;
+            ImplicitComponentGenerator component_generator;
             vector<string> lines;
             int read_lines(string file_path);
             void remove_comments();

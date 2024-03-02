@@ -2,20 +2,24 @@
 
 #include "DataManager.h"
 #include "FileParser.h"
+#include "ImplicitComponentGenerator.h"
 
+using namespace DataPathGen;
 using namespace Parser;
 
-namespace DataPathGen
+namespace Parser
 {
 
 DataPathGenerator::DataPathGenerator()
     : data_manager(DataManager())
     , file_parser(FileParser(&data_manager))
+    , implicit_component_generator(ImplicitComponentGenerator(&data_manager))
 {}
 
 void DataPathGenerator::run(string file_name)
 {
     file_parser.run(file_name);
+    implicit_component_generator.run();
     data_manager.print_wires();
     data_manager.print_components();
 }

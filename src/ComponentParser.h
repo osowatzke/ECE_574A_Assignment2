@@ -32,7 +32,7 @@ class ComponentParser;
 
 struct ParserTableEntry{
     regex r;
-    void (ComponentParser::*func)(vector<wire*> wires);
+    void (ComponentParser::*func)(vector<port*> ports);
 };
 
 class ComponentParser
@@ -45,20 +45,20 @@ class ComponentParser
     private:
         DataManager* data_manager; 
         vector<ParserTableEntry> PARSER_TABLE;
-        void parse_reg(vector<wire*> wires);
-        void parse_add(vector<wire*> wires);
-        void parse_sub(vector<wire*> wires);
-        void parse_mul(vector<wire*> wires);
-        void parse_gt(vector<wire*> wires);
-        void parse_lt(vector<wire*> wires);
-        void parse_eq(vector<wire*> wires);
-        void parse_mux2x1(vector<wire*> wires);
-        void parse_shr(vector<wire*> wires);
-        void parse_shl(vector<wire*> wires);
-        void parse_div(vector<wire*> wires);
-        void parse_mod(vector<wire*> wires);
-        void parse_inc(vector<wire*> wires);
-        void parse_dec(vector<wire*> wires);
+        void parse_reg(vector<port*> ports);
+        void parse_add(vector<port*> ports);
+        void parse_sub(vector<port*> ports);
+        void parse_mul(vector<port*> ports);
+        void parse_gt(vector<port*> ports);
+        void parse_lt(vector<port*> ports);
+        void parse_eq(vector<port*> ports);
+        void parse_mux2x1(vector<port*> ports);
+        void parse_shr(vector<port*> ports);
+        void parse_shl(vector<port*> ports);
+        void parse_div(vector<port*> ports);
+        void parse_mod(vector<port*> ports);
+        void parse_inc(vector<port*> ports);
+        void parse_dec(vector<port*> ports);
 };
 } // namespace Parser
 

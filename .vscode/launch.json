@@ -8,8 +8,8 @@
             "name": "Debug File Parser",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/src/FileParser.exe",
-            "args": ["${workspaceFolder}/circuits/474a_circuit1.txt"],
+            "program": "${workspaceFolder}/build/src/dpgen.exe",
+            "args": ["${workspaceFolder}/circuits/474a_circuit2.txt"],
             "cwd": "${workspaceFolder}"
         }
     ]

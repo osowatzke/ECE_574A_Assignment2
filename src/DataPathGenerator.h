@@ -3,10 +3,12 @@
 
 #include "DataManager.h"
 #include "FileParser.h"
+#include "ImplicitComponentGenerator.h"
 
 using namespace Parser;
 
-namespace DataPathGen
+using namespace DataPathGen;
+namespace Parser
 {
 class DataPathGenerator
 {
@@ -16,6 +18,7 @@ class DataPathGenerator
     private:
         DataManager data_manager;
         FileParser file_parser;
+        ImplicitComponentGenerator implicit_component_generator;
 };
 } // namespace DataPathGen;
 
