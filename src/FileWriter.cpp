@@ -186,6 +186,17 @@ namespace Writer
                     firstWire = false;
                     circuitFile << "." << it->first << "(" << it->second->connection->name << ")";
                 }
+                begin = currComponent->outputs.begin();
+                end = currComponent->outputs.end();
+                for (auto it = begin; it != end; ++it)
+                {
+                    if (!firstWire)
+                    {
+                        circuitFile << ", ";
+                    }
+                    firstWire = false;
+                    circuitFile << "." << it->first << "(" << it->second->connection->name << ")";
+                }
                 circuitFile << ");" << endl;
             }
         }

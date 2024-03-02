@@ -55,6 +55,7 @@ namespace DataPathGen
 
                 // Connect the current destination component to the new wire
                 newWire->dest.push_back(currPort);
+                currPort->connection = newWire;
 
                 // Update the destination port to point to the new cast component
                 currPort = newCastComponent->inputs["in"];
