@@ -38,17 +38,77 @@ namespace Writer
                 circuitFile << currWire->name;
             }
         }
-        circuitFile << ")" << endl;
+        circuitFile << ")" << endl << endl;
     }
     void FileWriter::terminateModule()
     {
         circuitFile << "endmodule" << endl;
+    }
+    void FileWriter::declareNet(wire* net)
+    {
+        if (net->type == WireType::INPUT)
+        {
+            circuitFile << "    input ";
+        }
+        else if (net->type == WireType::OUTPUT)
+        {
+            circuitFile << "    output ";
+        }
+        else
+        {
+            circuitFile << "    wire ";
+        }
+        if (net->sign)
+        {
+            circuitFile << "signed ";
+        }
+        if (net->width > 1)
+        {
+            circuitFile << "[" << net->width - 1 << ":0] ";
+        }
+        circuitFile << net->name << ";" << endl;
+    }
+    void FileWriter::declareInputs()
+    {
+        for (wire*& currWire : data_manager->wires)
+        {
+            if (currWire->type == WireType::INPUT)
+            {
+                declareNet(currWire);
+            }
+        }
+        circuitFile << endl;
+    }
+    void FileWriter::declareOutputs()
+    {
+        for (wire*& currWire : data_manager->wires)
+        {
+            if (currWire->type == WireType::OUTPUT)
+            {
+                declareNet(currWire);
+            }
+        }
+        circuitFile << endl;
+    }
+    void FileWriter::declareWires()
+    {
+        for (wire*& currWire : data_manager->wires)
+        {
+            if ((currWire->type == WireType::WIRE) || (currWire->type == WireType::REGISTER))
+            {
+                declareNet(currWire);
+            }
+        }
+        circuitFile << endl;
     }
     void FileWriter::run(string filePath)
     {
         openFile (filePath);
         determineModuleName(filePath);
         declareModule();
+        declareInputs();
+        declareOutputs();
+        declareWires();
         terminateModule();
         closeFile ();
     }

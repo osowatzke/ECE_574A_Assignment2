@@ -23,6 +23,10 @@ namespace Writer
             void determineModuleName(string filePath);
             void declareModule();
             void terminateModule();
+            void declareNet(wire* net);
+            void declareInputs();
+            void declareOutputs();
+            void declareWires();
     };
 }
 
