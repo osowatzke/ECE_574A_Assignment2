@@ -2,7 +2,6 @@
 #include "ComponentParser.h"
 #include "DataManager.h"
 #include "DataTypes.h"
-#include <iostream>
 
 using namespace std;
 
