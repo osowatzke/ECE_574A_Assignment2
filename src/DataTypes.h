@@ -9,7 +9,7 @@ using namespace std;
 
 namespace DataPathGen
 {
-struct component;
+struct port;
 enum WireType{INPUT,OUTPUT,WIRE,REGISTER};
 struct wire
 {
@@ -17,14 +17,16 @@ struct wire
     WireType type;
     int width;
     bool sign;
-    component* src;
-    vector<component*> dest;
+    port* src;
+    vector<port*> dest;
 };
+struct component;
 struct port
 {
     int width;
     int sign;
     wire* connection;
+    component* parent;
 };
 enum ComponentType{REG,ADD,SUB,MUL,COMP,MUX2x1,SHR,SHL,DIV,MOD,INC,DEC,CAST};
 struct component

@@ -20,12 +20,15 @@ namespace DataPathGen
 
     component* DataManager::create_reg(int width, bool sign, vector<wire*> wires)
     {
-        component* reg = components.back();
+        component* reg = new component;
+        components.push_back(reg);
         reg->type = ComponentType::REG;
         port* d = new port;
         port* q = new port;
         d->connection = wires[1];
         q->connection = wires[0];
+        d->parent = reg;
+        q->parent = reg;
         reg->width = width;
         reg->sign = sign;
         d->width = reg->width;
@@ -38,12 +41,15 @@ namespace DataPathGen
 
     component* DataManager::create_cast(int width, bool sign, vector<wire*> wires)
     {
-        component* cast = components.back();
+        component* cast = new component;
+        components.push_back(cast);
         cast->type = ComponentType::CAST;
         port* in = new port;
         port* out = new port;
         in->connection = wires[1];
         out->connection = wires[0];
+        in->parent = cast;
+        out->parent = cast;
         cast->width = width;
         cast->sign = sign;
         in->width = cast->width;
@@ -66,9 +72,11 @@ namespace DataPathGen
             isMatch = false;
             for (size_t i = 0; i < wires.size(); ++i)
             {
+                //cout << "Looping" << endl;
                 // If the name matches the base name or the pattern, increment the counter
-                if ((wires[i]->name == name) || ((nameInc > 0) && (wires[i]->name == (name + "_" + to_string(nameInc)))))
+                if (((nameInc < 0) && (wires[i]->name == name)) || ((nameInc >= 0) && (wires[i]->name == (name + "_" + to_string(nameInc)))))
                 {
+                    cout << wires[i] -> name << endl;
                     isMatch = true;
                     nameInc += 1;
                 }
@@ -76,7 +84,7 @@ namespace DataPathGen
         }
 
         // If there are wires with the same base name, append an incremented number
-        if (nameInc > 0) {
+        if (nameInc >= 0) {
             name += "_" + std::to_string(nameInc);
         }
 
@@ -144,6 +152,12 @@ DataManager::~DataManager()
     {
         auto begin = components[i]->inputs.begin();
         auto end = components[i]->inputs.end();
+        for (auto j = begin; j != end; ++j)
+        {
+            delete j->second;
+        }
+        begin = components[i]->outputs.begin();
+        end = components[i]->outputs.end();
         for (auto j = begin; j != end; ++j)
         {
             delete j->second;

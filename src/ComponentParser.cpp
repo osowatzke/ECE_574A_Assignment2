@@ -68,21 +68,24 @@ void ComponentParser::parse_line(string line)
         if (!match.empty())
         {
             component* new_component = new component;
-            vector <wire*> wires;
+            vector <port*> ports;
             for (size_t j = 1; j < match.size(); ++j)
             {
-                wires.push_back(data_manager->find_wire(match.str(j)));
+                ports.push_back(new port);
+                ports[j-1]->parent = new_component;
+                wire* wire_to_connect = data_manager->find_wire(match.str(j));
                 if (j == 1)
                 {
-                    wires[j-1]->src = new_component;
+                    wire_to_connect->src = ports[j-1];
                 }
                 else
                 {
-                    wires[j-1]->dest.push_back(new_component);
+                    wire_to_connect->dest.push_back(ports[j-1]);
                 }
+                ports[j-1]->connection = wire_to_connect;
             }
             data_manager->components.push_back(new_component);
-            (*this.*(PARSER_TABLE[i].func))(wires);
+            (*this.*(PARSER_TABLE[i].func))(ports);
             return;
         }
     }
@@ -94,30 +97,25 @@ void ComponentParser::parse_lines(vector<string> lines)
         parse_line(lines[i]);
     }
 }
-void ComponentParser::parse_reg(vector<wire*> wires)
+void ComponentParser::parse_reg(vector<port*> ports)
 {
     component* reg = data_manager->components.back();
     reg->type = ComponentType::REG;
-    port* d = new port;
-    port* q = new port;
-    d->connection = wires[1];
-    q->connection = wires[0];
+    port* d = ports[1];
+    port* q = ports[0];
     reg->width = d->connection->width;
     d->width = reg->width;
     q->width = reg->width;
     reg->inputs["d"] = d;
     reg->outputs["q"] = q;
 }
-void ComponentParser::parse_add(vector<wire*> wires)
+void ComponentParser::parse_add(vector<port*> ports)
 {
     component* add = data_manager->components.back();
     add->type = ComponentType::ADD;
-    port* a = new port;
-    port* b = new port;
-    port* sum = new port;
-    a->connection = wires[1];
-    b->connection = wires[2];
-    sum->connection = wires[0];
+    port* a = ports[1];
+    port* b = ports[2];
+    port* sum = ports[0];
     add->width = sum->connection->width;
     a->width = add->width;
     b->width = add->width;
@@ -126,16 +124,13 @@ void ComponentParser::parse_add(vector<wire*> wires)
     add->inputs["b"] = b;
     add->outputs["sum"] = sum;
 }
-void ComponentParser::parse_sub(vector<wire*> wires)
+void ComponentParser::parse_sub(vector<port*> ports)
 {
     component* sub = data_manager->components.back();    
     sub->type = ComponentType::SUB;
-    port* a = new port;
-    port* b = new port;
-    port* diff = new port;
-    a->connection = wires[1];
-    b->connection = wires[2];
-    diff->connection = wires[0];
+    port* a = ports[1];
+    port* b = ports[2];
+    port* diff = ports[0];
     sub->width = diff->connection->width;
     a->width = sub->width;
     b->width = sub->width;
@@ -144,16 +139,13 @@ void ComponentParser::parse_sub(vector<wire*> wires)
     sub->inputs["b"] = b;
     sub->outputs["diff"] = diff;
 }
-void ComponentParser::parse_mul(vector<wire*> wires)
+void ComponentParser::parse_mul(vector<port*> ports)
 {
     component* mul = data_manager->components.back();
     mul->type = ComponentType::MUL;
-    port* a = new port;
-    port* b = new port;
-    port* prod = new port;   
-    a->connection = wires[1];
-    b->connection = wires[2];
-    prod->connection = wires[0];
+    port* a = ports[1];
+    port* b = ports[2];
+    port* prod = ports[0];
     mul->width = prod->connection->width;
     a->width = mul->width;
     b->width = mul->width;
@@ -162,19 +154,18 @@ void ComponentParser::parse_mul(vector<wire*> wires)
     mul->inputs["b"] = b;
     mul->outputs["prod"] = prod;
 }
-void ComponentParser::parse_gt(vector<wire*> wires)
+void ComponentParser::parse_gt(vector<port*> ports)
 {
     component* comp = data_manager->components.back();
     comp->type = ComponentType::COMP;
-    port* a = new port;
-    port* b = new port;
-    port* gt = new port;
+    port* a = ports[1];
+    port* b = ports[2];
+    port* gt = ports[0];
     port* lt = new port;
     port* eq = new port;
-    a->connection = wires[1];
-    b->connection = wires[2];
-    gt->connection = wires[0];
+    lt->parent = comp;
     lt->connection = NULL;
+    eq->parent = comp;
     eq->connection = NULL;
     comp->width = max(a->connection->width, b->connection->width);
     a->width = comp->width;
@@ -189,19 +180,18 @@ void ComponentParser::parse_gt(vector<wire*> wires)
     comp->outputs["eq"] = eq;
 }
 
-void ComponentParser::parse_lt(vector<wire*> wires)
+void ComponentParser::parse_lt(vector<port*> ports)
 {
     component* comp = data_manager->components.back();
     comp->type = ComponentType::COMP;
-    port* a = new port;
-    port* b = new port;
+    port* a = ports[1];
+    port* b = ports[2];
+    port* lt = ports[0];
     port* gt = new port;
-    port* lt = new port;
     port* eq = new port;
-    a->connection = wires[1];
-    b->connection = wires[2];
+    gt->parent = comp;
     gt->connection = NULL;
-    lt->connection = wires[0];
+    eq->parent = comp;
     eq->connection = NULL;
     comp->width = max(a->connection->width, b->connection->width);
     a->width = comp->width;
@@ -216,20 +206,18 @@ void ComponentParser::parse_lt(vector<wire*> wires)
     comp->outputs["eq"] = eq;
 }
 
-void ComponentParser::parse_eq(vector<wire*> wires)
+void ComponentParser::parse_eq(vector<port*> ports)
 {
     component* comp = data_manager->components.back();
     comp->type = ComponentType::COMP;
-    port* a = new port;
-    port* b = new port;
+    port* a = ports[1];
+    port* b = ports[2];
+    port* eq = ports[0];
     port* gt = new port;
     port* lt = new port;
-    port* eq = new port;
-    a->connection = wires[1];
-    b->connection = wires[2];
+    gt->parent = comp;
     gt->connection = NULL;
-    lt->connection = NULL;
-    eq->connection = wires[0];
+    lt->parent = comp;
     comp->width = max(a->connection->width, b->connection->width);
     a->width = comp->width;
     b->width = comp->width;
@@ -243,18 +231,14 @@ void ComponentParser::parse_eq(vector<wire*> wires)
     comp->outputs["eq"] = eq;
 }
 
-void ComponentParser::parse_mux2x1(vector<wire*> wires)
+void ComponentParser::parse_mux2x1(vector<port*> ports)
 {
     component* mux2x1 = data_manager->components.back();
     mux2x1->type = ComponentType::MUX2x1;
-    port* sel = new port;
-    port* b = new port;
-    port* a = new port;
-    port* d = new port;
-    sel->connection = wires[1];   
-    b->connection = wires[2];
-    a->connection = wires[3];
-    d->connection = wires[0];
+    port* sel = ports[1];
+    port* b = ports[2];
+    port* a = ports[3];
+    port* d = ports[0];
     mux2x1->width = d->connection->width;
     sel->width = 1;
     b->width = mux2x1->width;
@@ -265,16 +249,13 @@ void ComponentParser::parse_mux2x1(vector<wire*> wires)
     mux2x1->inputs["a"] = a;
     mux2x1->outputs["d"] = d;
 }
-void ComponentParser::parse_shr(vector<wire*> wires)
+void ComponentParser::parse_shr(vector<port*> ports)
 {
     component* shr = data_manager->components.back();
     shr->type = ComponentType::SHR;
-    port* a = new port;
-    port* sh_amt = new port;
-    port* d = new port;
-    a->connection = wires[1];
-    sh_amt->connection = wires[2];
-    d->connection = wires[0];
+    port* a = ports[1];
+    port* sh_amt = ports[2];
+    port* d = ports[0];
     shr->width = d->connection->width;
     a->width = shr->width;
     sh_amt->width = shr->width;
@@ -283,16 +264,13 @@ void ComponentParser::parse_shr(vector<wire*> wires)
     shr->inputs["sh_amt"] = sh_amt;
     shr->outputs["d"] = d;
 }
-void ComponentParser::parse_shl(vector<wire*> wires)
+void ComponentParser::parse_shl(vector<port*> ports)
 {
     component* shl = data_manager->components.back();
     shl->type = ComponentType::SHL;
-    port* a = new port;
-    port* sh_amt = new port;
-    port* d = new port;
-    a->connection = wires[1];
-    sh_amt->connection = wires[2];
-    d->connection = wires[0];
+    port* a = ports[1];
+    port* sh_amt = ports[2];
+    port* d = ports[0];
     shl->width = d->connection->width;
     a->width = shl->width;
     sh_amt->width = shl->width;
@@ -301,16 +279,13 @@ void ComponentParser::parse_shl(vector<wire*> wires)
     shl->inputs["sh_amt"] = sh_amt;
     shl->outputs["d"] = d;
 }
-void ComponentParser::parse_div(vector<wire*> wires)
+void ComponentParser::parse_div(vector<port*> ports)
 {
     component* div = data_manager->components.back();
     div->type = ComponentType::DIV;
-    port* a = new port;
-    port* b = new port;
-    port* qout = new port;
-    a->connection = wires[1];
-    b->connection = wires[2];
-    qout->connection = wires[0];
+    port* a = ports[1];
+    port* b = ports[2];
+    port* qout = ports[0];
     div->width = qout->connection->width;
     a->width = div->width;
     b->width = div->width;
@@ -319,16 +294,13 @@ void ComponentParser::parse_div(vector<wire*> wires)
     div->inputs["b"] = b;
     div->outputs["qout"] = qout;
 }
-void ComponentParser::parse_mod(vector<wire*> wires)
+void ComponentParser::parse_mod(vector<port*> ports)
 {
     component* mod = data_manager->components.back();
     mod->type = ComponentType::MOD;
-    port* a = new port;
-    port* b = new port;
-    port* rem = new port;
-    a->connection = wires[1];
-    b->connection = wires[2];
-    rem->connection = wires[0];
+    port* a = ports[1];
+    port* b = ports[2];
+    port* rem = ports[0];
     mod->width = rem->connection->width;
     a->width = mod->width;
     b->width = mod->width;
@@ -337,28 +309,24 @@ void ComponentParser::parse_mod(vector<wire*> wires)
     mod->inputs["b"] = b;
     mod->outputs["rem"] = rem;
 }
-void ComponentParser::parse_inc(vector<wire*> wires)
+void ComponentParser::parse_inc(vector<port*> ports)
 {
     component* inc = data_manager->components.back();
     inc->type = ComponentType::INC;
-    port* a = new port;
-    port* d = new port;
-    a->connection = wires[1];
-    d->connection = wires[0];
+    port* a = ports[1];
+    port* d = ports[0];
     inc->width = d->connection->width;
     a->width = inc->width;
     d->width = inc->width;
     inc->inputs["a"] = a;
     inc->outputs["d"] = d;
 }
-void ComponentParser::parse_dec(vector<wire*> wires)
+void ComponentParser::parse_dec(vector<port*> ports)
 {
     component* dec = data_manager->components.back();
     dec->type = ComponentType::DEC;
-    port* a = new port;
-    port* d = new port;
-    a->connection = wires[1];
-    d->connection = wires[0];
+    port* a = ports[1];
+    port* d = ports[0];
     dec->width = d->connection->width;
     a->width = dec->width;
     d->width = dec->width;
