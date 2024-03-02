@@ -57,7 +57,7 @@ namespace DataPathGen
     string DataManager::get_unique_name(string name)
     {
         // Count of wires with the same base name
-        int nameInc = 1;
+        int nameInc = -1;
         bool isMatch = true;
 
         // Loop through existing wires to find a unique name

@@ -38,8 +38,7 @@ struct component
 };
 inline string ComponentTypeToStr(ComponentType type)
 {
-    switch (type)
-    {
+    switch (type) {
         case ComponentType::REG:
             return "REG";
         case ComponentType::ADD:
@@ -64,9 +63,10 @@ inline string ComponentTypeToStr(ComponentType type)
             return "INC";
         case ComponentType::DEC:
             return "DEC";
-        default:
-            return "";
+        case ComponentType::CAST:
+            return "CAST";
     }
+    return "UNKNOWN"; // Return "UNKNOWN" for invalid enumerator
 }
 } // namespace DataPathGen
 
