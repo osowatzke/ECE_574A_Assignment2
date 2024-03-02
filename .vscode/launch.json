@@ -5,11 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug File Parser",
+            "name": "Debug Data Path Generator",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/src/dpgen.exe",
-            "args": ["${workspaceFolder}/circuits/474a_circuit2.txt"],
+            "args": ["${workspaceFolder}/circuits/474a_circuit1.txt", "circuit1.v"],
             "cwd": "${workspaceFolder}"
         }
     ]
