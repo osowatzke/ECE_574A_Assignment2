@@ -1,6 +1,7 @@
 #ifndef GUARD_FileParser_h
 #define GUARD_FileParser_h
 
+#include "ImplicitComponentGenerator.h"
 #include "ComponentParser.h"
 #include "DataManager.h"
 #include "DataTypes.h"

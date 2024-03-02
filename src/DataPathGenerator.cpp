@@ -6,7 +6,7 @@
 
 using namespace Parser;
 
-namespace DataPathGen
+namespace Parser
 {
 
 DataPathGenerator::DataPathGenerator()

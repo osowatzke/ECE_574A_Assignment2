@@ -12,7 +12,9 @@ class ImplicitComponentGenerator
 {
     public:
         void run();
-        ImplicitComponentGenerator(DataManager* data_manager);
+        ImplicitComponentGenerator(DataManager* data_manager) {
+            this->data_manager = data_manager;
+        }
     private:
         DataManager* data_manager;
         void cast_wire(wire* wire);
