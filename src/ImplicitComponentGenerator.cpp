@@ -21,19 +21,35 @@ namespace DataPathGen
         for (component*& currComponent : currWire->dest) {
             // Check if there is a width or sign mismatch between the source wire and the current destination component
             if ((currWire->type != WireType::INPUT) && ((currWire->src->width != currComponent->width) || (currWire->src->sign != currComponent->sign))) {
-                // Create a new wire for the cast operation if it doesn't already exist
-                wire* newWire = data_manager->create_wire(("cast_" + currWire->name), WireType::WIRE, currComponent->width, currComponent->sign);
+                bool foundViableCast = false;
+                for (component*& tempComponent : currWire->dest) {
+                    if ((tempComponent->type == ComponentType::CAST) && ((tempComponent->sign == currComponent->sign) && (tempComponent->type == currComponent->type))) {
+                        for (pair<string, port*> currPort : currComponent->inputs) {
+                            if (currPort.second->connection == currWire) {
+                                // TODO: Verify that this is able to redirect the input port of a component to a cast component and remove dest connection of currWire to tempComponent
+                                currPort.second->connection->dest.push_back(tempComponent);
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
                 
-                // Create a new cast component
-                component* newCastComponent = data_manager->create_cast(currComponent->width, currComponent->sign, {currWire, newWire});
-                
-                // Connect the new cast component to the new wire
-                newWire->src = newCastComponent;
-                // Connect the current destination component to the new wire
-                newWire->dest.push_back(currComponent);
+                if (!foundViableCast) {
+                    // Create a new wire for the cast operation if it doesn't already exist
+                    wire* newWire = data_manager->create_wire(("cast_" + currWire->name), WireType::WIRE, currComponent->width, currComponent->sign);
+                    
+                    // Create a new cast component
+                    component* newCastComponent = data_manager->create_cast(currComponent->width, currComponent->sign, {currWire, newWire});
+                    
+                    // Connect the new cast component to the new wire
+                    newWire->src = newCastComponent;
+                    // Connect the current destination component to the new wire
+                    newWire->dest.push_back(currComponent);
 
-                // Update the destination component to point to the new cast component
-                currComponent = newCastComponent;
+                    // Update the destination component to point to the new cast component
+                    currComponent = newCastComponent;
+                }
             }
         }
     }
