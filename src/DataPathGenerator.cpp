@@ -17,13 +17,18 @@ DataPathGenerator::DataPathGenerator()
     , file_writer(FileWriter(&data_manager))
 {}
 
-void DataPathGenerator::run(string in_file_name, string out_file_name)
+int DataPathGenerator::run(string in_file_name, string out_file_name)
 {
-    file_parser.run(in_file_name);
+    int retVal = file_parser.run(in_file_name);
+    if (retVal)
+    {
+        return retVal;
+    }
     component_generator.run();
     file_writer.run(out_file_name);
     data_manager.print_wires();
     data_manager.print_components();
+    return 0;
 }
 
 } // namespace DataPathGen
@@ -31,6 +36,5 @@ void DataPathGenerator::run(string in_file_name, string out_file_name)
 int main(int argc, char** argv)
 {
     DataPathGenerator data_path_gen;
-    data_path_gen.run(argv[1], argv[2]);
-    return 0;
+    return data_path_gen.run(argv[1], argv[2]);
 }

@@ -10,92 +10,180 @@ using namespace std;
 
 namespace Parser
 {
+    
 ComponentParser::ComponentParser(DataManager* data_manager)
-    : data_manager(data_manager)
+    : data_manager(data_manager) {}
+
+int ComponentParser::parse_line(string line)
 {
-    ParserTableEntry REG_ENTRY;
-    REG_ENTRY.r = REG_REGEX;
-    REG_ENTRY.func = &ComponentParser::parse_reg;
-    ParserTableEntry ADD_ENTRY;
-    ADD_ENTRY.r = ADD_REGEX;
-    ADD_ENTRY.func = &ComponentParser::parse_add;
-    ParserTableEntry SUB_ENTRY;
-    SUB_ENTRY.r = SUB_REGEX;
-    SUB_ENTRY.func = &ComponentParser::parse_sub;
-    ParserTableEntry MUL_ENTRY;
-    MUL_ENTRY.r = MUL_REGEX;
-    MUL_ENTRY.func = &ComponentParser::parse_mul;
-    ParserTableEntry GT_ENTRY;
-    GT_ENTRY.r = GT_REGEX;
-    GT_ENTRY.func = &ComponentParser::parse_gt;
-    ParserTableEntry LT_ENTRY;
-    LT_ENTRY.r = LT_REGEX;
-    LT_ENTRY.func = &ComponentParser::parse_lt;
-    ParserTableEntry EQ_ENTRY;
-    EQ_ENTRY.r = EQ_REGEX;
-    EQ_ENTRY.func = &ComponentParser::parse_eq;
-    ParserTableEntry MUX2x1_ENTRY;
-    MUX2x1_ENTRY.r = MUX2x1_REGEX;
-    MUX2x1_ENTRY.func = &ComponentParser::parse_mux2x1;
-    ParserTableEntry SHL_ENTRY;
-    SHL_ENTRY.r = SHL_REGEX;
-    SHL_ENTRY.func = &ComponentParser::parse_shl;
-    ParserTableEntry SHR_ENTRY;
-    SHR_ENTRY.r = SHR_REGEX;
-    SHR_ENTRY.func = &ComponentParser::parse_shr;
-    ParserTableEntry DIV_ENTRY;
-    DIV_ENTRY.r = DIV_REGEX;
-    DIV_ENTRY.func = &ComponentParser::parse_div;
-    ParserTableEntry MOD_ENTRY;
-    MOD_ENTRY.r = MOD_REGEX;
-    MOD_ENTRY.func = &ComponentParser::parse_mod;
-    ParserTableEntry INC_ENTRY;
-    INC_ENTRY.r = INC_REGEX;
-    INC_ENTRY.func = &ComponentParser::parse_inc;
-    ParserTableEntry DEC_ENTRY;
-    DEC_ENTRY.r = DEC_REGEX;
-    DEC_ENTRY.func = &ComponentParser::parse_dec;
-    PARSER_TABLE = {REG_ENTRY, ADD_ENTRY, SUB_ENTRY, MUL_ENTRY,
-            GT_ENTRY, LT_ENTRY, EQ_ENTRY, MUX2x1_ENTRY, SHR_ENTRY,
-            SHL_ENTRY, DIV_ENTRY, MOD_ENTRY, INC_ENTRY, DEC_ENTRY};
-}
-void ComponentParser::parse_line(string line)
-{
-    for (size_t i = 0; i < PARSER_TABLE.size(); ++i)
+    smatch match;
+    const regex component_regex{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*(\\S+)?\\s*(\\w+)?\\s*(\\S+)?\\s*(\\w+)?\\s*$"};
+    regex_match(line, match, component_regex);
+    if (!match.empty())
     {
-        smatch match;
-        regex_match(line, match, PARSER_TABLE[i].r);
-        if (!match.empty())
+        vector <string> wire_names;
+        vector <string> operators;
+        wire_names.push_back(match.str(1));
+        for (size_t i = 2; i < match.size(); ++ i)
         {
-            component* new_component = new component;
-            vector <port*> ports;
-            for (size_t j = 1; j < match.size(); ++j)
+            if (match.str(i) != "")
             {
-                ports.push_back(new port);
-                ports[j-1]->parent = new_component;
-                wire* wire_to_connect = data_manager->find_wire(match.str(j));
-                if (j == 1)
+                if ((i % 2) == 0)
                 {
-                    wire_to_connect->src = ports[j-1];
+                    wire_names.push_back(match.str(i));
                 }
                 else
                 {
-                    wire_to_connect->dest.push_back(ports[j-1]);
+                    operators.push_back(match.str(i));
                 }
-                ports[j-1]->connection = wire_to_connect;
             }
-            data_manager->components.push_back(new_component);
-            (*this.*(PARSER_TABLE[i].func))(ports);
-            return;
+        }
+        component* new_component = new component;
+        vector <port*> ports;
+        bool firstWire = true;
+        for (string& wire_name : wire_names)
+        {
+            if (wire_name != "1")
+            {  
+                wire* wire_to_connect = data_manager->find_wire(wire_name);
+                if (wire_to_connect == NULL)
+                {
+                    wire_to_connect = new wire;
+                    wire_to_connect->name = wire_name;
+                    wire_to_connect->width = 1;
+                    wire_to_connect->sign = 0;
+                    wire_to_connect->src = NULL;
+                    data_manager->wires.push_back(wire_to_connect);
+                    undefined_wires.push_back(wire_to_connect);
+                    cout << "Adding wire " << wire_name << endl;
+                }
+                port* new_port = new port;
+                if (firstWire)
+                {
+                    wire_to_connect->src = new_port;
+                }
+                else
+                {
+                    wire_to_connect->dest.push_back(new_port);
+                }
+                firstWire = false;
+                new_port->connection = wire_to_connect;
+                new_port->parent = new_component;
+                ports.push_back(new_port);
+            }
+        }
+        data_manager->components.push_back(new_component);
+        if (operators.size() == 0)
+        {
+            parse_reg(ports);
+        }
+        else if (operators.size() == 1)
+        {
+            if (operators[0] == "+")
+            {
+                if (ports.size() == 1)
+                {
+                    parse_inc(ports);
+                }
+                else
+                {
+                    parse_add(ports);
+                }
+            }
+            else if (operators[0] == "-")
+            {
+                if (ports.size() == 1)
+                {
+                    parse_sub(ports);
+                }
+                else
+                {
+                    parse_sub(ports);
+                }
+            }
+            else if (operators[0] == "*")
+            {
+                parse_mul(ports);
+            }
+            else if (operators[0] == ">")
+            {
+                parse_gt(ports);
+            }
+            else if (operators[0] == "<")
+            {
+                parse_lt(ports);
+            }
+            else if (operators[0] == "==")
+            {
+                parse_eq(ports);
+            }
+            else if (operators[0] == ">>")
+            {
+                parse_shr(ports);
+            }
+            else if (operators[0] == "<<")
+            {
+                parse_shl(ports);
+            }
+            else if (operators[0] == "/")
+            {
+                parse_div(ports);
+            }
+            else if (operators[0] == "%")
+            {
+                parse_mod(ports);
+            }
+            else
+            {
+                cout << "ERROR: Incorrect operator '" << operators[0] << "'" << endl;
+                return 1;
+            }
+        }
+        else
+        {
+            if (operators[0] == "?" && operators[1] == ":")
+            {
+                parse_mux2x1(ports);
+            }
+            else
+            {
+                cout << "ERROR: Incorrect Operator '" << operators[0] << "' and '" << operators[1] << "'" << endl;
+                return 1;
+            }
         }
     }
+    return 0;
 }
-void ComponentParser::parse_lines(vector<string> lines)
+int ComponentParser::parse_lines(vector<string> lines)
 {
+    int retVal;
     for (size_t i = 0; i < lines.size(); ++i)
     {
-        parse_line(lines[i]);
+        retVal = parse_line(lines[i]);
+        if (retVal)
+        {
+            return retVal;
+        }
     }
+    for (wire*& undefined_wire : undefined_wires)
+    {
+        if (undefined_wire->src == NULL)
+        {
+            cout << "ERROR: Missing Input " << undefined_wire->name << endl;
+            return 1;
+        }
+        else if (undefined_wire->dest.size() == 0)
+        {
+            cout << "ERROR: Missing Output " << undefined_wire->name << endl;
+            return 1;
+        }
+        else
+        {
+            cout << "ERROR: Missing Wire " << undefined_wire->name << endl;
+            return 1;
+        }
+    }
+    return 0;
 }
 void ComponentParser::parse_reg(vector<port*> ports)
 {

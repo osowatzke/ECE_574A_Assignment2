@@ -15,7 +15,7 @@ class DataPathGenerator
 {
     public:
         DataPathGenerator();
-        void run(string in_file_name, string out_file_name);
+        int run(string in_file_name, string out_file_name);
     private:
         DataManager data_manager;
         FileParser file_parser;

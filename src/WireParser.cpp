@@ -36,6 +36,7 @@ namespace Parser
                 new_wire->type = type;
                 new_wire->sign = sign;
                 new_wire->width = width;
+                new_wire->src = NULL;
                 data_manager->wires.push_back(new_wire);
             }
         }
