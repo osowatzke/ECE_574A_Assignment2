@@ -1,11 +1,13 @@
 #ifndef GUARD_DataPathGenerator_h
 #define GUARD_DataPathGenerator_h
 
+#include "CriticalPathCalculator.h"
 #include "DataManager.h"
 #include "FileParser.h"
 #include "FileWriter.h"
 #include "ImplicitComponentGenerator.h"
 
+using namespace CriticalPath;
 using namespace Parser;
 using namespace Writer;
 
@@ -21,6 +23,7 @@ class DataPathGenerator
         FileParser file_parser;
         ImplicitComponentGenerator component_generator;
         FileWriter file_writer;
+        CriticalPathCalculator critical_path;
 };
 } // namespace DataPathGen;
 

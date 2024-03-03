@@ -72,11 +72,9 @@ namespace DataPathGen
             isMatch = false;
             for (size_t i = 0; i < wires.size(); ++i)
             {
-                //cout << "Looping" << endl;
                 // If the name matches the base name or the pattern, increment the counter
                 if (((nameInc < 0) && (wires[i]->name == name)) || ((nameInc >= 0) && (wires[i]->name == (name + "_" + to_string(nameInc)))))
                 {
-                    cout << wires[i] -> name << endl;
                     isMatch = true;
                     nameInc += 1;
                 }

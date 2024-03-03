@@ -18,6 +18,7 @@ DataPathGenerator::DataPathGenerator()
     , file_parser(FileParser(&data_manager))
     , component_generator(ImplicitComponentGenerator(&data_manager))
     , file_writer(FileWriter(&data_manager))
+    , critical_path(CriticalPathCalculator(&data_manager))
 {}
 
 int DataPathGenerator::run(string in_file_name, string out_file_name)
@@ -29,8 +30,9 @@ int DataPathGenerator::run(string in_file_name, string out_file_name)
     }
     component_generator.run();
     file_writer.run(out_file_name);
-    data_manager.print_wires();
-    data_manager.print_components();
+    critical_path.run();
+    // data_manager.print_wires();
+    // data_manager.print_components();
     return 0;
 }
 
