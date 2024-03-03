@@ -13,38 +13,16 @@ using namespace std;
 namespace Parser
 {
 
-const regex REG_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*$"};
-const regex ADD_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*\\+\\s*(?!1)(\\w+)\\s*$"};
-const regex SUB_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*-\\s*(?!1)(\\w+)\\s*$"};
-const regex MUL_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*\\*\\s*(\\w+)\\s*$"};
-const regex GT_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*>\\s*(\\w+)\\s*$"};
-const regex LT_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*<\\s*(\\w+)\\s*$"};
-const regex EQ_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*==\\s*(\\w+)\\s*$"};
-const regex MUX2x1_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s\\?\\s*(\\w+)\\s*:\\s*(\\w+)\\s*$"};
-const regex SHR_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*>>\\s*(\\w+)\\s*$"};
-const regex SHL_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*<<\\s*(\\w+)\\s*$"};
-const regex DIV_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*/\\s*(\\w+)\\s*$"};
-const regex MOD_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*%\\s*(\\w+)\\s*$"};    
-const regex INC_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*\\+\\s*1\\s*$"};
-const regex DEC_REGEX{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*-\\s*1\\s*$"};
-
-class ComponentParser;
-
-struct ParserTableEntry{
-    regex r;
-    void (ComponentParser::*func)(vector<port*> ports);
-};
-
 class ComponentParser
 {
     public:
         vector<component*> components;
         ComponentParser(DataManager* data_manager);
-        void parse_line(string line);
-        void parse_lines(vector<string> lines);
+        int parse_lines(vector<string> lines);
     private:
-        DataManager* data_manager; 
-        vector<ParserTableEntry> PARSER_TABLE;
+        DataManager* data_manager;
+        vector <wire*> undefined_wires;
+        int parse_line(string line);
         void parse_reg(vector<port*> ports);
         void parse_add(vector<port*> ports);
         void parse_sub(vector<port*> ports);

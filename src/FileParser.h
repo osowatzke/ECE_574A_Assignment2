@@ -17,7 +17,7 @@ namespace Parser
     class FileParser{
         public:
             FileParser(DataManager* data_manager);
-            void run(string file_path);
+            int run(string file_path);
         private:            
             DataManager* data_manager;
             WireParser wire_parser;
@@ -26,7 +26,7 @@ namespace Parser
             int read_lines(string file_path);
             void remove_comments();
             void parse_wires();
-            void parse_components();
+            int parse_components();
     };
 } // namespace Parser
 
