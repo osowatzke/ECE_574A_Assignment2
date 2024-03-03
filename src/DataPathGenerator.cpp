@@ -6,7 +6,6 @@
 
 #include <iostream>
 #include <string>
-#include <string.h>
 
 using namespace Parser;
 using namespace Writer;
