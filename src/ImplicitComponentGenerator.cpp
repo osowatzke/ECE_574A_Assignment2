@@ -16,6 +16,7 @@ namespace DataPathGen
         generate_implicit_casts();
         generate_implicit_registers();
         name_all_components();
+        create_implicit_input_wires();
     }
 
     void ImplicitComponentGenerator::fix_single_bit_wires()
@@ -40,10 +41,10 @@ namespace DataPathGen
             if ((currWire->width != currPort->width) || (currWire->sign != currPort->sign)) {
 
                 // Create a new wire for the cast operation
-                wire* newWire = data_manager->create_wire(("cast_" + currWire->name), WireType::WIRE, currPort->width, currPort->sign);
+                wire* newWire = create_wire(("cast_" + currWire->name), WireType::WIRE, currPort->width, currPort->sign);
 
                 // Create a new cast component
-                component* newCastComponent = data_manager->create_cast(currPort->width, currPort->sign, {currWire, newWire});
+                component* newCastComponent = create_cast(currPort->width, currPort->sign, {currWire, newWire});
                 
                 // Connect the new cast component to the new wire
                 newWire->src = newCastComponent->outputs["out"];
@@ -62,10 +63,10 @@ namespace DataPathGen
         {
 
             // Create a new wire for the cast operation
-            wire* newWire = data_manager->create_wire(("cast_" + currWire->name), WireType::WIRE, currWire->src->width, currWire->src->sign);
+            wire* newWire = create_wire(("cast_" + currWire->name), WireType::WIRE, currWire->src->width, currWire->src->sign);
 
             // Create a new cast component
-            component* newCastComponent = data_manager->create_cast(newWire->width, newWire->sign, {newWire, currWire});
+            component* newCastComponent = create_cast(newWire->width, newWire->sign, {newWire, currWire});
             
             // Connect the new wire to the current wires source
             newWire->src = currWire->src;
@@ -87,13 +88,13 @@ namespace DataPathGen
             if (((currWire->type == WireType::OUTPUT) || (currWire->type == WireType::REGISTER)) && (currWire->src->parent->type != ComponentType::REG)) {
                 
                 // Create a new wire for the cast operation if it doesn't already exist
-                wire* newWire = data_manager->create_wire("reg_" + currWire->name, WireType::WIRE, currWire->src->width, currWire->src->sign);
+                wire* newWire = create_wire("reg_" + currWire->name, WireType::WIRE, currWire->src->width, currWire->src->sign);
                 
                 // Connect the new wire to the source wire
                 newWire->src = currWire->src;
 
                 // Create a new reg component
-                component* newRegComponent = data_manager->create_reg(currWire->src->width, currWire->src->sign, {currWire, newWire});
+                component* newRegComponent = create_reg(currWire->src->width, currWire->src->sign, {currWire, newWire});
 
                 // Connect the new register component to the new wire
                 newWire->dest.push_back(newRegComponent->inputs["d"]);
@@ -142,6 +143,104 @@ namespace DataPathGen
             else {
                 currComponent->name += to_string(componentCount[idx][0]);
                 ++componentCount[idx][0];
+            }
+        }
+    }
+
+    wire* ImplicitComponentGenerator::create_wire(string name, WireType type, int width, bool sign)
+    {
+        // Create a new wire with the unique name
+        wire* newWire = new wire;
+        newWire->name = data_manager->get_unique_name(name);
+
+        // Set the properties of the new wire
+        newWire->type = type;
+        newWire->width = width;
+        newWire->sign = sign;
+
+        // Add the new wire to the vector of wires
+        data_manager->wires.push_back(newWire);
+
+        // Return a pointer to the new wire
+        return newWire;
+    }
+
+    component* ImplicitComponentGenerator::create_reg(int width, bool sign, vector<wire*> wires)
+    {
+        component* reg = new component;
+        data_manager->components.push_back(reg);
+        reg->type = ComponentType::REG;
+        port* d = new port;
+        port* q = new port;
+        d->connection = wires[0];
+        q->connection = wires[1];
+        d->parent = reg;
+        q->parent = reg;
+        reg->width = width;
+        reg->sign = sign;
+        d->width = reg->width;
+        q->width = reg->width;
+        reg->inputs["d"] = d;
+        reg->outputs["q"] = q;
+
+        return reg;
+    }
+
+    component* ImplicitComponentGenerator::create_cast(int width, bool sign, vector<wire*> wires)
+    {
+        component* cast = new component;
+        data_manager->components.push_back(cast);
+        cast->type = ComponentType::CAST;
+        port* in = new port;
+        port* out = new port;
+        in->connection = wires[0];
+        out->connection = wires[1];
+        in->parent = cast;
+        out->parent = cast;
+        cast->width = width;
+        cast->sign = sign;
+        in->width = in->connection->width;
+        out->width = out->connection->width;
+        cast->inputs["in"] = in;
+        cast->outputs["out"] = out;
+
+        return cast;
+    }
+
+    void ImplicitComponentGenerator::create_implicit_input_wires() {
+        // Create clk wire
+        wire* clkWire = create_wire("clk", WireType::INPUT, 1, 0);
+
+        // Create rst wire
+        wire* rstWire = create_wire("rst", WireType::INPUT, 1, 0);
+
+        // Check and change the names of any other wire with the name clk or rst
+        for (wire* currWire : data_manager->wires) {
+            if ((currWire->name == "clk") && (currWire != clkWire)) {
+                currWire->name = data_manager->get_unique_name(currWire->name);
+            }
+
+            if ((currWire->name == "rst") && (currWire != rstWire)) {
+                currWire->name = data_manager->get_unique_name(currWire->name);
+            }
+        }
+
+        // Add clk and rst as variables to reg components
+        for (component* currComponent : data_manager->components) {
+            if (currComponent->type == ComponentType::REG) {
+                // Connect the clk wire to the reg
+                currComponent->inputs["clk"] = new port();
+                currComponent->inputs["clk"]->sign = currComponent->sign;
+                currComponent->inputs["clk"]->width = currComponent->width;
+                currComponent->inputs["clk"]->connection = clkWire;
+                clkWire->dest.push_back(currComponent->inputs["clk"]);
+
+                // Connect the rst wire to the reg
+                currComponent->inputs["rst"] = new port();
+                currComponent->inputs["rst"]->sign = currComponent->sign;
+                currComponent->inputs["rst"]->width = currComponent->width;
+                currComponent->inputs["rst"]->connection = rstWire;
+                rstWire->dest.push_back(currComponent->inputs["rst"]);
             }
         }
     }
