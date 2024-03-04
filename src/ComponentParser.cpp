@@ -81,7 +81,7 @@ int ComponentParser::parse_line(string line)
         {
             if (operators[0] == "+")
             {
-                if (ports.size() == 1)
+                if (ports.size() == 2)
                 {
                     parse_inc(ports);
                 }
@@ -92,9 +92,9 @@ int ComponentParser::parse_line(string line)
             }
             else if (operators[0] == "-")
             {
-                if (ports.size() == 1)
+                if (ports.size() == 2)
                 {
-                    parse_sub(ports);
+                    parse_dec(ports);
                 }
                 else
                 {
