@@ -40,12 +40,7 @@ namespace DataPathGen
             if ((currWire->width != currPort->width) || (currWire->sign != currPort->sign)) {
 
                 // Create a new wire for the cast operation
-                wire* newWire = data_manager->create_wire("cast_" + currWire->name);
-
-                // Set the properties of the new wire
-                newWire->sign = currPort->sign;
-                newWire->type = WireType::WIRE;
-                newWire->width = currPort->width;
+                wire* newWire = data_manager->create_wire(("cast_" + currWire->name), WireType::WIRE, currPort->width, currPort->sign);
 
                 // Create a new cast component
                 component* newCastComponent = data_manager->create_cast(currPort->width, currPort->sign, {currWire, newWire});
@@ -67,12 +62,7 @@ namespace DataPathGen
         {
 
             // Create a new wire for the cast operation
-            wire* newWire = data_manager->create_wire("cast_" + currWire->name);
-
-            // Set the properties of the new wire
-            newWire->sign = currWire->src->sign;
-            newWire->type = WireType::WIRE;
-            newWire->width = currWire->src->width;
+            wire* newWire = data_manager->create_wire(("cast_" + currWire->name), WireType::WIRE, currWire->src->width, currWire->src->sign);
 
             // Create a new cast component
             component* newCastComponent = data_manager->create_cast(newWire->width, newWire->sign, {newWire, currWire});
@@ -97,12 +87,7 @@ namespace DataPathGen
             if (((currWire->type == WireType::OUTPUT) || (currWire->type == WireType::REGISTER)) && (currWire->src->parent->type != ComponentType::REG)) {
                 
                 // Create a new wire for the cast operation if it doesn't already exist
-                wire* newWire = data_manager->create_wire("reg_" + currWire->name);
-                
-                // Set the properties of the new wire
-                newWire->sign = currWire->src->sign;
-                newWire->type = WireType::WIRE;
-                newWire->width = currWire->src->width;
+                wire* newWire = data_manager->create_wire("reg_" + currWire->name, WireType::WIRE, currWire->src->width, currWire->src->sign);
                 
                 // Connect the new wire to the source wire
                 newWire->src = currWire->src;
