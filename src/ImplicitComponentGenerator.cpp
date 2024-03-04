@@ -3,6 +3,8 @@
 #include "DataManager.h"
 #include "DataTypes.h"
 
+#include <iostream>
+
 using namespace std;
 
 namespace DataPathGen
@@ -33,48 +35,69 @@ namespace DataPathGen
 
     void ImplicitComponentGenerator::cast_wire(wire* currWire)
     {
-        // Iterate through all destination components of the current wire
-        for (port*& currPort : currWire->dest)
+        // Update wire width to match source width if source exists and wire does not drive output
+        if ((currWire->type != WireType::INPUT) && (currWire->type != WireType::OUTPUT))
         {
-            // Check if there is a width or sign mismatch between the source wire and the current destination port
-            if ((currWire->width != currPort->width) || (currWire->sign != currPort->sign)) {
-
-                // Create a new wire for the cast operation
-                wire* newWire = data_manager->create_wire(("cast_" + currWire->name), WireType::WIRE, currPort->width, currPort->sign);
-
-                // Create a new cast component
-                component* newCastComponent = data_manager->create_cast(currPort->width, currPort->sign, {currWire, newWire});
-                
-                // Connect the new cast component to the new wire
-                newWire->src = newCastComponent->outputs["out"];
-
-                // Connect the current destination component to the new wire
-                newWire->dest.push_back(currPort);
-                currPort->connection = newWire;
-
-                // Update the destination port to point to the new cast component
-                currPort = newCastComponent->inputs["in"];
-            }
+            currWire->width = currWire->src->width;
+            currWire->sign  = currWire->src->sign;
         }
 
-        // Check the source of each wire for width or sign mismatch
-        if ((currWire->type != WireType::INPUT) && ((currWire->width != currWire->src->width) || (currWire->sign != currWire->src->sign)))
+        // Keep track of existing wires
+        vector<wire*> existingWires;
+        existingWires.push_back(currWire);
+
+        // Store destination ports of current wire and clear vector of destination ports
+        vector<port*> destPorts = currWire->dest;
+        currWire->dest = {};
+
+        // Handle wire source different from wire
+        if ((currWire->type != WireType::INPUT) && ((currWire->src->width != currWire->width) || (currWire->src->sign != currWire->sign)))
         {
-
-            // Create a new wire for the cast operation
-            wire* newWire = data_manager->create_wire(("cast_" + currWire->name), WireType::WIRE, currWire->src->width, currWire->src->sign);
-
-            // Create a new cast component
-            component* newCastComponent = data_manager->create_cast(newWire->width, newWire->sign, {newWire, currWire});
-            
-            // Connect the new wire to the current wires source
+            // Create new wire
+            string newWireName = "cast_" + currWire->name;
+            wire* newWire = data_manager->create_wire(newWireName, WireType::WIRE, currWire->src->width, currWire->src->sign);
             newWire->src = currWire->src;
+            currWire->src->connection = newWire;
+            existingWires.push_back(newWire);
 
-            // Connect the new cast component to the new wire
-            newWire->dest.push_back(newCastComponent->inputs["in"]);
+            // Connect new wire to current wire
+            component* castComponent = data_manager->create_cast(currWire->src->width, currWire->src->sign, {newWire, currWire});
+            newWire->dest.push_back(castComponent->inputs["in"]);
+            currWire->src = castComponent->outputs["out"];
+        }
 
-            // Connect the source of the current wire to the cast compontent
-            currWire->src = newCastComponent->outputs["out"];
+        // Loop through the set of initial destination ports
+        for (port*& currPort : destPorts)
+        {
+            bool match = false;
+
+            // Loop through all the existing wires
+            for (wire*& existingWire : existingWires)
+            {
+                // Connect port to wire if matching wire exists
+                if (!match && (currPort->width == existingWire->width) && (currPort->sign == existingWire->sign))
+                {
+                    existingWire->dest.push_back(currPort);
+                    currPort->connection = existingWire;
+                    match = true;
+                }
+            }
+
+            // If there is no matching wire
+            if (!match)
+            {
+                // Create new wire
+                string newWireName = "cast_" + currWire->name;
+                wire* newWire = data_manager->create_wire(newWireName, WireType::WIRE, currPort->width, currPort->sign);
+                newWire->dest.push_back(currPort);
+                currPort->connection = newWire;
+                existingWires.push_back(newWire);
+                
+                // Connect new wire to current wire
+                component* newComponent = data_manager->create_cast(newWire->width, newWire->sign, {currWire, newWire});
+                currWire->dest.push_back(newComponent->inputs["in"]);
+                newWire->src = newComponent->outputs["out"];
+            }
         }
     }
 
