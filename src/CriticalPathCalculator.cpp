@@ -16,7 +16,7 @@ namespace CriticalPath
     void CriticalPathCalculator::outputCriticalPath()
     {
         double criticalPath = computeCriticalPath();
-        cout << "Critical Path(ns) = " << criticalPath << endl;
+        cout << "Critical Path : " << criticalPath << " ns" << endl;
     }
     double CriticalPathCalculator::computeCriticalPath()
     {
