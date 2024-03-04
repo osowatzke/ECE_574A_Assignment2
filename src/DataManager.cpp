@@ -5,11 +5,16 @@
 
 namespace DataPathGen
 {
-    wire* DataManager::create_wire(string name)
+    wire* DataManager::create_wire(string name, WireType type, int width, bool sign)
     {
         // Create a new wire with the unique name
         wire* newWire = new wire;
         newWire->name = get_unique_name(name);
+
+        // Set the properties of the new wire
+        newWire->type = type;
+        newWire->width = width;
+        newWire->sign = sign;
 
         // Add the new wire to the vector of wires
         wires.push_back(newWire);

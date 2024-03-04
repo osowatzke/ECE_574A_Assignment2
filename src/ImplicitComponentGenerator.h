@@ -20,6 +20,7 @@ class ImplicitComponentGenerator
         void generate_implicit_registers();
         void generate_implicit_casts();
         void name_all_components();
+        void generate_univeral_input_wires();
         string ComponentNameToString(ComponentType type);
 };
 } // namespace DataPathGen
