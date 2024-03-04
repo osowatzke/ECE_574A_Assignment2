@@ -25,12 +25,15 @@ namespace DataPathGen
 
     component* DataManager::create_reg(int width, bool sign, vector<wire*> wires)
     {
-        component* reg = components.back();
+        component* reg = new component;
+        components.push_back(reg);
         reg->type = ComponentType::REG;
         port* d = new port;
         port* q = new port;
-        d->connection = wires[1];
-        q->connection = wires[0];
+        d->connection = wires[0];
+        q->connection = wires[1];
+        d->parent = reg;
+        q->parent = reg;
         reg->width = width;
         reg->sign = sign;
         d->width = reg->width;
@@ -43,16 +46,19 @@ namespace DataPathGen
 
     component* DataManager::create_cast(int width, bool sign, vector<wire*> wires)
     {
-        component* cast = components.back();
+        component* cast = new component;
+        components.push_back(cast);
         cast->type = ComponentType::CAST;
         port* in = new port;
         port* out = new port;
-        in->connection = wires[1];
-        out->connection = wires[0];
+        in->connection = wires[0];
+        out->connection = wires[1];
+        in->parent = cast;
+        out->parent = cast;
         cast->width = width;
         cast->sign = sign;
-        in->width = cast->width;
-        out->width = cast->width;
+        in->width = in->connection->width;
+        out->width = out->connection->width;
         cast->inputs["in"] = in;
         cast->outputs["out"] = out;
 
@@ -72,7 +78,7 @@ namespace DataPathGen
             for (size_t i = 0; i < wires.size(); ++i)
             {
                 // If the name matches the base name or the pattern, increment the counter
-                if ((wires[i]->name == name) || ((nameInc > 0) && (wires[i]->name == (name + "_" + to_string(nameInc)))))
+                if (((nameInc < 0) && (wires[i]->name == name)) || ((nameInc >= 0) && (wires[i]->name == (name + "_" + to_string(nameInc)))))
                 {
                     isMatch = true;
                     nameInc += 1;
@@ -81,7 +87,7 @@ namespace DataPathGen
         }
 
         // If there are wires with the same base name, append an incremented number
-        if (nameInc > 0) {
+        if (nameInc >= 0) {
             name += "_" + std::to_string(nameInc);
         }
 
@@ -116,8 +122,10 @@ void DataManager::print_components()
     cout << "COMPONENTS:" << endl;
     for (size_t i = 0; i < components.size(); ++i)
     {
-        cout << "\t" << ComponentTypeToStr(components[i]->type) << endl;
-        cout << "\t\tDATAWIDTH = " << components[i]->width << endl;
+        cout << "\t" << components[i]->name << endl;
+        cout << "\t\ttype = " << ComponentTypeToStr(components[i]->type) << endl;
+        cout << "\t\tsigned = " << components[i]->sign << endl;
+        cout << "\t\tdatawidth = " << components[i]->width << endl;
         auto begin = components[i]->inputs.begin();
         auto end = components[i]->inputs.end();
         for (auto j = begin; j != end; ++j)
@@ -149,6 +157,12 @@ DataManager::~DataManager()
     {
         auto begin = components[i]->inputs.begin();
         auto end = components[i]->inputs.end();
+        for (auto j = begin; j != end; ++j)
+        {
+            delete j->second;
+        }
+        begin = components[i]->outputs.begin();
+        end = components[i]->outputs.end();
         for (auto j = begin; j != end; ++j)
         {
             delete j->second;

@@ -22,7 +22,9 @@ If compiling for the first time, make a build directory by running `mkdir build`
 
 Then, navigate to the build directory, by running `cd build`.
 
-From the build directory, run the following command to configure the cmake project `cmake ..`
+Once you are in the build directory, type ctrl+shift+p to open the Command Pallete. Once the Command Pallete is open, select "CMake: Configure".
+
+Then from the build directory, run the following command to configure the cmake project `cmake ..`
 
 Finally, run `cmake --build .` to compile.
 
@@ -30,14 +32,14 @@ Once the build directory is created, you should only have to run the cmake comma
 
 ### Running the code
 
-There is currently a `FileParser` which supports parsing behavioral netlists. It can be run from the build directory by issuing the following command:
+The Datapath Generator can be run from the build directory by issuing the following command:
 
-`.\src\FileParser.exe ..\circuits\<circuit_name>`
+`.\src\dpgen.exe ..\circuits\<circuit_name> <output_verilog_file>`
 
-where <circuit_name> is the name of the circuit you wish to parse.
+where <circuit_name> is the name of the circuit you wish to parse and the <output_verilog_file> is the path to the output verilog file.
 
 ### Debugging the code
 
-Refer to launch.json in the .vscode directory. It is currently configured to debug "474a_circuit1.txt". However, the launch.json file can be modified to support debugging of any parsing run.
+Refer to launch.json in the .vscode directory. It is currently configured to debug "474a_circuit1.txt". However, the launch.json file can be modified to support debugging of any data path generator run.
 
-To debug, click on the Run and Debug tab and hit the play button to start a "Debug File Parser" run.
+To debug, click on the Run and Debug tab and hit the play button to start a "Debug Data Path Generator" run.

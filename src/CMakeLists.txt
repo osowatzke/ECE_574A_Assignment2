@@ -12,6 +12,8 @@ set(SOURCES
     WireParser.cpp
     ComponentParser.cpp 
     FileParser.cpp
+    FileWriter.cpp
+    CriticalPathCalculator.cpp
     ImplicitComponentGenerator.cpp)
 
 set(HEADER_FILES
@@ -22,6 +24,8 @@ set(HEADER_FILES
     WireParser.h
     ComponentParser.h
     FileParser.h
+    FileWriter.h
+    CriticalPathCalculator.h
     ImplicitComponentGenerator.h)
 
 add_executable(dpgen ${SOURCES} ${HEADER_FILES})

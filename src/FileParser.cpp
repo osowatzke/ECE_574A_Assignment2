@@ -19,16 +19,19 @@ namespace Parser{
 FileParser::FileParser(DataManager* data_manager)
     : data_manager(data_manager)
     , wire_parser(WireParser(data_manager))
-    , component_parser(ComponentParser(data_manager))
-    , component_generator(ImplicitComponentGenerator(data_manager)) {}
+    , component_parser(ComponentParser(data_manager)) {}
 
-void FileParser::run(string file_path)
+int FileParser::run(string file_path)
 {
-    read_lines(file_path);
+    int retVal = read_lines(file_path);
+    if (retVal)
+    {
+        return retVal;
+    }
     remove_comments();
     parse_wires();
-    parse_components();
-    component_generator.run();
+    retVal = parse_components();
+    return retVal;
 }
 
 int FileParser::read_lines(string file_path)
@@ -44,6 +47,7 @@ int FileParser::read_lines(string file_path)
         file.close();
         return 0;
     }
+    cout << "ERROR: Unable to open file " << file_path << endl;
     return 1;
 }
 
@@ -66,9 +70,9 @@ void FileParser::parse_wires()
     wire_parser.parse_lines(lines);
 }
 
-void FileParser::parse_components()
+int FileParser::parse_components()
 {
-    component_parser.parse_lines(lines);
+    return component_parser.parse_lines(lines);
 }
 
 } // namespace Parser
