@@ -5,65 +5,6 @@
 
 namespace DataPathGen
 {
-    wire* DataManager::create_wire(string name, WireType type, int width, bool sign)
-    {
-        // Create a new wire with the unique name
-        wire* newWire = new wire;
-        newWire->name = get_unique_name(name);
-
-        // Set the properties of the new wire
-        newWire->type = type;
-        newWire->width = width;
-        newWire->sign = sign;
-
-        // Add the new wire to the vector of wires
-        wires.push_back(newWire);
-
-        // Return a pointer to the new wire
-        return newWire;
-    }
-
-    component* DataManager::create_reg(int width, bool sign, vector<wire*> wires)
-    {
-        component* reg = new component;
-        components.push_back(reg);
-        reg->type = ComponentType::REG;
-        port* d = new port;
-        port* q = new port;
-        d->connection = wires[0];
-        q->connection = wires[1];
-        d->parent = reg;
-        q->parent = reg;
-        reg->width = width;
-        reg->sign = sign;
-        d->width = reg->width;
-        q->width = reg->width;
-        reg->inputs["d"] = d;
-        reg->outputs["q"] = q;
-
-        return reg;
-    }
-
-    component* DataManager::create_cast(int width, bool sign, vector<wire*> wires)
-    {
-        component* cast = new component;
-        components.push_back(cast);
-        cast->type = ComponentType::CAST;
-        port* in = new port;
-        port* out = new port;
-        in->connection = wires[0];
-        out->connection = wires[1];
-        in->parent = cast;
-        out->parent = cast;
-        cast->width = width;
-        cast->sign = sign;
-        in->width = in->connection->width;
-        out->width = out->connection->width;
-        cast->inputs["in"] = in;
-        cast->outputs["out"] = out;
-
-        return cast;
-    }
 
     string DataManager::get_unique_name(string name)
     {
