@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/src/dpgen.exe",
-            "args": ["${workspaceFolder}/circuits/574a_circuit5.txt", "circuit5.v"],
+            "args": ["${workspaceFolder}/circuits/474a_circuit1.txt", "circuit1.v"],
             "cwd": "${workspaceFolder}"
         }
     ]
