@@ -34,8 +34,15 @@ namespace Parser
                 wire* new_wire = new wire;
                 new_wire->name = wire_match.str(1);
                 new_wire->type = type;
-                new_wire->sign = sign;
                 new_wire->width = width;
+                if (new_wire->width > 1)
+                {
+                    new_wire->sign = sign;
+                }
+                else
+                {
+                    new_wire->sign = false;
+                }                
                 new_wire->src = NULL;
                 data_manager->wires.push_back(new_wire);
             }

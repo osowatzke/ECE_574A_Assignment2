@@ -14,23 +14,9 @@ namespace DataPathGen
 
     void ImplicitComponentGenerator::run()
     {
-        fix_single_bit_wires();
         generate_implicit_casts();
         generate_implicit_registers();
         name_all_components();
-    }
-
-    void ImplicitComponentGenerator::fix_single_bit_wires()
-    {
-        // Loop through all wires
-        for (wire*& currWire : data_manager->wires)
-        {
-            // Ensure single bit wires are unsigned
-            if (currWire->width == 1)
-            {
-                currWire->sign = 0;
-            }
-        }
     }
 
     void ImplicitComponentGenerator::cast_wire(wire* currWire)
@@ -156,7 +142,7 @@ namespace DataPathGen
             currComponent->name = ComponentTypeToStr(currComponent->type);
 
             // Set name and update count
-            if (currComponent->sign = 1) 
+            if (currComponent->sign) 
             {
                 currComponent->name = "S" + currComponent->name;
                 currComponent->name += to_string(componentCount[idx][1]);

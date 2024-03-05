@@ -15,7 +15,6 @@ class ImplicitComponentGenerator
         void run();
     private:
         DataManager* data_manager;
-        void fix_single_bit_wires();
         void cast_wire(wire* wire);
         void generate_implicit_registers();
         void generate_implicit_casts();

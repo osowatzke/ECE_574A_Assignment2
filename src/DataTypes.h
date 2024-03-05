@@ -24,7 +24,7 @@ struct component;
 struct port
 {
     int width;
-    int sign;
+    bool sign;
     wire* connection;
     component* parent;
 };
@@ -34,7 +34,7 @@ struct component
     string name;
     ComponentType type;
     int width;
-    int sign;
+    bool sign;
     map<string, port*> inputs;
     map<string, port*> outputs;
 };
