@@ -107,10 +107,12 @@ namespace Writer
     }
     void FileWriter::declareCasts()
     {
+        bool atLeastOneCast = false;
         for (component*& currComponent : data_manager->components)
         {
             if (currComponent->type == ComponentType::CAST)
             {
+                atLeastOneCast = true;
                 wire* output = currComponent->outputs["out"]->connection;
                 wire* input = currComponent->inputs["in"]->connection;
                 circuitFile << "    assign " << output->name << " = ";
@@ -158,7 +160,10 @@ namespace Writer
                 }
             }
         }
-        circuitFile << endl;
+        if (atLeastOneCast)
+        {
+            circuitFile << endl;
+        }
     }
     void FileWriter::declareComponents()
     {
