@@ -218,18 +218,18 @@ namespace DataPathGen
 
     void ImplicitComponentGenerator::create_implicit_input_wires() {
         // Create clk wire
-        wire* clkWire = create_wire("clk", WireType::INPUT, 1, 0);
+        wire* clkWire = create_wire("Clk", WireType::INPUT, 1, 0);
 
         // Create rst wire
-        wire* rstWire = create_wire("rst", WireType::INPUT, 1, 0);
+        wire* rstWire = create_wire("Rst", WireType::INPUT, 1, 0);
 
         // Check and change the names of any other wire with the name clk or rst
         for (wire* currWire : data_manager->wires) {
-            if ((currWire->name == "clk") && (currWire != clkWire)) {
+            if ((currWire->name == "Clk") && (currWire != clkWire)) {
                 currWire->name = data_manager->get_unique_name(currWire->name);
             }
 
-            if ((currWire->name == "rst") && (currWire != rstWire)) {
+            if ((currWire->name == "Rst") && (currWire != rstWire)) {
                 currWire->name = data_manager->get_unique_name(currWire->name);
             }
         }
@@ -238,18 +238,18 @@ namespace DataPathGen
         for (component* currComponent : data_manager->components) {
             if (currComponent->type == ComponentType::REG) {
                 // Connect the clk wire to the reg
-                currComponent->inputs["clk"] = new port;
-                currComponent->inputs["clk"]->sign = false;
-                currComponent->inputs["clk"]->width = 1;
-                currComponent->inputs["clk"]->connection = clkWire;
-                clkWire->dest.push_back(currComponent->inputs["clk"]);
+                currComponent->inputs["Clk"] = new port;
+                currComponent->inputs["Clk"]->sign = false;
+                currComponent->inputs["Clk"]->width = 1;
+                currComponent->inputs["Clk"]->connection = clkWire;
+                clkWire->dest.push_back(currComponent->inputs["Clk"]);
 
                 // Connect the rst wire to the reg
-                currComponent->inputs["rst"] = new port;
-                currComponent->inputs["rst"]->sign = false;
-                currComponent->inputs["rst"]->width = 1;
-                currComponent->inputs["rst"]->connection = rstWire;
-                rstWire->dest.push_back(currComponent->inputs["rst"]);
+                currComponent->inputs["Rst"] = new port;
+                currComponent->inputs["Rst"]->sign = false;
+                currComponent->inputs["Rst"]->width = 1;
+                currComponent->inputs["Rst"]->connection = rstWire;
+                rstWire->dest.push_back(currComponent->inputs["Rst"]);
             }
         }
     }
