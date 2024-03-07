@@ -25,6 +25,10 @@ namespace Writer
             moduleName = fileName;
         }
     }
+    void FileWriter::declareTimescale()
+    {
+        circuitFile << "`timescale 1ns/1ns" << endl << endl;
+    }
     void FileWriter::declareModule()
     {
         circuitFile << "module " << moduleName;
@@ -42,7 +46,7 @@ namespace Writer
                 circuitFile << currWire->name;
             }
         }
-        circuitFile << ")" << endl << endl;
+        circuitFile << ");" << endl << endl;
     }
     void FileWriter::terminateModule()
     {
@@ -211,6 +215,7 @@ namespace Writer
     {
         openFile (filePath);
         determineModuleName(filePath);
+        declareTimescale();
         declareModule();
         declareInputs();
         declareOutputs();

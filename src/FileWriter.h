@@ -21,6 +21,7 @@ namespace Writer
             void openFile(string filePath);
             void closeFile();
             void determineModuleName(string filePath);
+            void declareTimescale();
             void declareModule();
             void terminateModule();
             void declareNet(wire* net);
