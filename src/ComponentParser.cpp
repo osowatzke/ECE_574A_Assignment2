@@ -55,7 +55,6 @@ int ComponentParser::parse_line(string line)
                     wire_to_connect->src = NULL;
                     data_manager->wires.push_back(wire_to_connect);
                     undefined_wires.push_back(wire_to_connect);
-                    cout << "Adding wire " << wire_name << endl;
                 }
                 port* new_port = new port;
                 if (firstWire)
