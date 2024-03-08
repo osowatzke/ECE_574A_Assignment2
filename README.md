@@ -50,7 +50,7 @@ Autogenerate the required verilog files by running
 
 `..\scripts\generate_verilog_files.cmd`
 
-from the build directoryl.
+from the build directory.
 
 **Note: you should rerun this command every time you pull from main**
 
