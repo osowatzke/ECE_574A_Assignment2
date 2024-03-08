@@ -1,6 +1,6 @@
 `timescale 1ns / 1ns
 
-module Scircuit2(a, b, c, z, x, clk, rst);
+module circuit2(a, b, c, z, x, clk, rst);
 
     input  clk, rst;
     input  signed [31:0] a, b, c;
