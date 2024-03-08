@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 
-module circuit2(a, b, c, Clk, Rst);
+module circuit2_autogen(a, b, c, z, x, Clk, Rst);
 
     input signed [31:0] a;
     input signed [31:0] b;
