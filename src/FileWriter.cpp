@@ -36,7 +36,7 @@ namespace Writer
         bool firstInput = true;
         for (wire*& currWire : data_manager->wires)
         {
-            if (currWire->type == WireType::INPUT)
+            if ((currWire->type == WireType::INPUT) || (currWire->type == WireType::OUTPUT))
             {
                 if (!firstInput)
                 {
