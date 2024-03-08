@@ -1,8 +1,8 @@
 `timescale 1ns / 1ns
 
-module ucircuit1(a, b, c, clk, rst);
+module ucircuit1(a, b, c, Clk, Rst);
 
-        input clk, rst;
+        input Clk, Rst;
         input  [ 7:0] a, b;
 
         output [ 7:0] c;
@@ -10,6 +10,6 @@ module ucircuit1(a, b, c, clk, rst);
         wire   [ 7:0] cwire;
 
         ADD    #(.DATAWIDTH( 8)) ADD_1(a, b, cwire);                // cwire = a + b
-        REG    #(.DATAWIDTH( 8)) REG_1(c, cwire, clk, rst);         // c = cwire
+        REG    #(.DATAWIDTH( 8)) REG_1(c, cwire, Clk, Rst);         // c = cwire
 
 endmodule

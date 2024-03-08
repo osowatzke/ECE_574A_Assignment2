@@ -1,8 +1,8 @@
 `timescale 1ns / 1ns
 
-module circuit2(a, b, c, z, x, clk, rst);
+module circuit2(a, b, c, z, x, Clk, Rst);
 
-    input  clk, rst;
+    input  Clk, Rst;
     input  signed [31:0] a, b, c;
     output signed [31:0] z, x;
     wire   signed [31:0] d, e, f, g, h, xwire, zwire;
@@ -22,7 +22,7 @@ module circuit2(a, b, c, z, x, clk, rst);
     SMUX2x1#(.DATAWIDTH(32)) MUX2x1_2(f, g, dEQe, h);       // h = dEQe ? g : f, signed multiplexing
     SSHL   #(.DATAWIDTH(32)) SHL_1(g, dLTe_32, xwire);      // xwire = g << dLTe, signed shift left
     SSHR   #(.DATAWIDTH(32)) SHR_1(h, dEQe_32, zwire);      // zwire = h >> dEQe, signed shift right
-    SREG   #(.DATAWIDTH(32)) REG_1(x, xwire, clk, rst);     // x = xwire, signed register
-    SREG   #(.DATAWIDTH(32)) REG_2(z, zwire, clk, rst);     // z = zwire, signed register
+    SREG   #(.DATAWIDTH(32)) REG_1(x, xwire, Clk, Rst);     // x = xwire, signed register
+    SREG   #(.DATAWIDTH(32)) REG_2(z, zwire, Clk, Rst);     // z = zwire, signed register
 
 endmodule

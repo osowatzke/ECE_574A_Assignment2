@@ -1,8 +1,8 @@
 `timescale 1ns/1ns
 
-module circuit4(a, b, c, z, x, clk, rst);
+module circuit4(a, b, c, z, x, Clk, Rst);
 
-    input  clk, rst;
+    input  Clk, Rst;
     input  signed [63:0] a, b, c;
 
     output signed [31:0] z, x;
@@ -26,11 +26,11 @@ module circuit4(a, b, c, z, x, clk, rst);
     SCOMP   #(.DATAWIDTH(64)) COMP_2(d, e, dLTe, , );        // dLTe = d < e, signed comparison
     SMUX2x1 #(.DATAWIDTH(64)) MUX2x1_1(e, d, dLTe, g);       // g = dLTe ? d : e, signed multiplexing
     SMUX2x1 #(.DATAWIDTH(64)) MUX2x1_2(f, g, dEQe, h);       // h = dEQe ? g : f, signed multiplexing
-    SREG    #(.DATAWIDTH(64)) REG_1(greg, g, clk, rst);      // greg = g, signed register
-    SREG    #(.DATAWIDTH(64)) REG_2(hreg, h, clk, rst);      // hreg = h, signed register
+    SREG    #(.DATAWIDTH(64)) REG_1(greg, g, Clk, Rst);      // greg = g, signed register
+    SREG    #(.DATAWIDTH(64)) REG_2(hreg, h, Clk, Rst);      // hreg = h, signed register
     SSHL    #(.DATAWIDTH(64)) SHL_1(hreg, dLTe_64, xrin);    // xrin = hreg << dLTe, signed shift
     SSHR    #(.DATAWIDTH(64)) SHR_1(greg, dEQe_64, zrin);    // zrin = greg >> dEQe, signed shift
-    SREG    #(.DATAWIDTH(64)) REG_3(x_64, xrin, clk, rst);   // x = xrin, signed register
-    SREG    #(.DATAWIDTH(64)) REG_4(z_64, zrin, clk, rst);   // z = zrin, signed register
+    SREG    #(.DATAWIDTH(64)) REG_3(x_64, xrin, Clk, Rst);   // x = xrin, signed register
+    SREG    #(.DATAWIDTH(64)) REG_4(z_64, zrin, Clk, Rst);   // z = zrin, signed register
 
 endmodule

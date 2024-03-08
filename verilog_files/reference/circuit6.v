@@ -1,8 +1,8 @@
 `timescale 1ns / 1ns
 
-module circuit6(a, b, c, zero, z, clk, rst);
+module circuit6(a, b, c, zero, z, Clk, Rst);
 
-    input  clk, rst;
+    input  Clk, Rst;
     input  signed [63:0] a, b, c, zero;
     
     output signed [63:0] z;
@@ -15,6 +15,6 @@ module circuit6(a, b, c, zero, z, clk, rst);
     SMOD   #(.DATAWIDTH(64)) MOD_1(a, c, g);                // g = a % c, signed modulo
     SCOMP  #(.DATAWIDTH(64)) COMP_1(g, zero, , ,gEQz);      // gEQz = g == zero, signed comparison
     SMUX2x1#(.DATAWIDTH(64)) MUX2x1_1(f, e, gEQz, zwire);   // zwire = gEQz ? e : f, signed multiplexing
-    SREG   #(.DATAWIDTH(64)) REG_1(z, zwire, clk, rst);     // z = zwire, signed register
+    SREG   #(.DATAWIDTH(64)) REG_1(z, zwire, Clk, Rst);     // z = zwire, signed register
 
 endmodule
