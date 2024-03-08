@@ -1,8 +1,8 @@
 `timescale 1ns / 1ns
 
-module Scircuit3(a, b, c, d, e, f, g, h, sa, avg, clk, rst);
+module Scircuit3(a, b, c, d, e, f, g, h, sa, avg, Clk, Rst);
     
-    input  clk, rst;
+    input  Clk, Rst;
     input  [7:0] sa;
     input  signed [15:0] a, b, c, d, e, f, g, h;
 
@@ -37,6 +37,6 @@ module Scircuit3(a, b, c, d, e, f, g, h, sa, avg, clk, rst);
     SHR    #(.DATAWIDTH(32)) SHR_3(l2div4, sa_32, l2div8);    // l2div8 = l2div4 >> sa
 
     // Registering the final output
-    SREG   #(.DATAWIDTH(32)) REG_1(avg_32, l2div8, clk, rst); // avg = l2div8
+    SREG   #(.DATAWIDTH(32)) REG_1(avg_32, l2div8, Clk, Rst); // avg = l2div8
 
 endmodule
