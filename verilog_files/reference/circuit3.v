@@ -1,6 +1,6 @@
 `timescale 1ns / 1ns
 
-module Scircuit3(a, b, c, d, e, f, g, h, sa, avg, Clk, Rst);
+module circuit3(a, b, c, d, e, f, g, h, sa, avg, Clk, Rst);
     
     input  Clk, Rst;
     input  [7:0] sa;

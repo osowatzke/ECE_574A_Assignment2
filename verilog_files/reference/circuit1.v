@@ -1,4 +1,4 @@
-module Scircuit1(a, b, c, z, x, Clk, Rst);
+module circuit1(a, b, c, z, x, Clk, Rst);
 
     input  Clk, Rst;
     input  signed [7:0] a, b, c;
