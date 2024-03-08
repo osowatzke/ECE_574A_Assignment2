@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 
-module ucircuit3(a, b, Clk, Rst);
+module ucircuit3_autogen(a, b, c, Clk, Rst);
 
     input [31:0] a;
     input [15:0] b;

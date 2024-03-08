@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 
-module mixedcircuit2(a, b, Clk, Rst);
+module mixedcircuit2_autogen(a, b, c, Clk, Rst);
 
     input signed [7:0] a;
     input [15:0] b;
