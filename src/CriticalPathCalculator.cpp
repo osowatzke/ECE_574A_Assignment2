@@ -23,7 +23,7 @@ namespace CriticalPath
         double criticalPath = 0.0;
         for (wire*& currWire : data_manager->wires)
         {
-            if ((currWire->type == WireType::INPUT) && ((currWire->name != "clk") && (currWire->name != "rst")))
+            if ((currWire->type == WireType::INPUT) && ((currWire->name != "Clk") && (currWire->name != "Rst")))
             {
                 double pathDelay = computeCriticalPath(currWire);
                 if (pathDelay > criticalPath)
