@@ -1,6 +1,6 @@
-module Scircuit1(a, b, c, z, x, clk, rst);
+module Scircuit1(a, b, c, z, x, Clk, Rst);
 
-    input  clk, rst;
+    input  Clk, Rst;
     input  signed [7:0] a, b, c;
 
     output signed [7:0] z;
@@ -23,10 +23,10 @@ module Scircuit1(a, b, c, z, x, clk, rst);
     SCOMP  #(.DATAWIDTH(8)) COMP_1(d, e, , g, );                   // g = d > e, signed comparison
     SMUX2x1#(.DATAWIDTH(8)) MUX2x1_1(e, d, g, zwire);              // z = g ? d : e, signed multiplexing
 
-    SREG   #(.DATAWIDTH(8)) REG_1(z, zwire, clk, rst);             // z = zwire with register, signed
+    SREG   #(.DATAWIDTH(8)) REG_1(z, zwire, Clk, Rst);             // z = zwire with register, signed
 
     SMUL   #(.DATAWIDTH(16)) MUL_1(a_16, c_16, f);                 // f = a * c, signed multiplication
     SSUB   #(.DATAWIDTH(16)) SUB_1(f, d_16, xwire);                // xwire = f - d, signed subtraction
-    SREG   #(.DATAWIDTH(16)) REG_2(x, xwire, clk, rst);            // x = xwire with register, signed
+    SREG   #(.DATAWIDTH(16)) REG_2(x, xwire, Clk, Rst);            // x = xwire with register, signed
 
 endmodule
