@@ -28,6 +28,6 @@ module ucircuit1_tb();
 
     ucircuit1_autogen autogen_circuit(.a(a), .b(b), .c(cmeas), .Clk(Clk), .Rst(Rst));
 
-    serror_monitor #(.DATAWIDTH(8)) serror_monitor_i(cmeas, cref, cvalid, cerr, Clk, Rst);
+    error_monitor #(.DATAWIDTH(8)) error_monitor_i(cmeas, cref, cvalid, cerr, Clk, Rst);
     
 endmodule
