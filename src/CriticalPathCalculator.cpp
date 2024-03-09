@@ -66,45 +66,60 @@ namespace DataPathGen
         return criticalPath;
     }
 
+    // Function recursively computes critical path starting at a wire
     double CriticalPathCalculator::computeCriticalPath(wire* currWire)
     {
+        // Initialize critical path
         double criticalPath = 0.0;
+
+        // Return critical path of 0 for outputs
         if (currWire->type == WireType::OUTPUT) {
             return 0.0;
         }
+
+        // Loop through each of the ports the wire is connected to
         for (port*& currPort : currWire->dest)
         {
+            // Determine component corresponding to each port
             component* currComponent = currPort->parent;
+
+            // Terminate at registers without considering register delay
+            // Delay of registers applied at beginning of paths only
             if (currComponent->type != ComponentType::REG){
+
+                // Determine the component delay 
                 double componentDelay = getComponentDelay(currComponent);
+                
+                // Initialize max delay for component output
                 double maxPathDelay = 0.0;
-                if (currComponent->type != ComponentType::REG)
+
+                // Determine the maximum delay for each of the components outputs
+                auto begin = currComponent->outputs.begin();
+                auto end = currComponent->outputs.end();
+                for (auto it = begin; it != end; ++it)
                 {
-                    auto begin = currComponent->outputs.begin();
-                    auto end = currComponent->outputs.end();
-                    for (auto it = begin; it != end; ++it)
-                    {
-                        wire* nextWire = it->second->connection;
-                        double pathDelay = computeCriticalPath(nextWire);
-                        if (pathDelay > maxPathDelay)
-                        {
-                            maxPathDelay = pathDelay;
-                        }
-                    }
+                    wire* nextWire = it->second->connection;
+                    double pathDelay = computeCriticalPath(nextWire);
+                    maxPathDelay = max(pathDelay, maxPathDelay);
                 }
+
+                // Update the path delay with the delay of the current component
                 maxPathDelay += componentDelay;
-                if (maxPathDelay > criticalPath)
-                {
-                    criticalPath = maxPathDelay;
-                }
+
+                // Update the critical path
+                criticalPath = max(maxPathDelay, criticalPath);
             }
         }
         return criticalPath;
     }
 
+    // Function computes the delay of a component
     double CriticalPathCalculator::getComponentDelay(component* currComponent)
     {
+        // Get row in table corresponding to component
         int componentIdx = ComponentTypeToInt(currComponent->type);
+
+        // Get column in table corresponding to width
         int widthIdx = -1;
         switch (currComponent->width)
         {
@@ -127,6 +142,8 @@ namespace DataPathGen
                 widthIdx = 5;
                 break;
         }
+
+        // Return delay from table
         return COMPONENT_DELAY[componentIdx][widthIdx];
     }
 } // namespace DataPathGen
