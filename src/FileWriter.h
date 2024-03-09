@@ -13,12 +13,12 @@ namespace Writer
     {
         public:
             FileWriter(DataManager* data_manager);
-            void run(string filePath);
+            int run(string filePath);
         private:
             DataManager* data_manager;
             ofstream circuitFile;
             string moduleName;
-            void openFile(string filePath);
+            int openFile(string filePath);
             void closeFile();
             void determineModuleName(string filePath);
             void declareTimescale();
