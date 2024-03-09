@@ -9,6 +9,7 @@ using namespace std;
 
 namespace DataPathGen
 {
+// Define wire type
 struct port;
 enum WireType{INPUT,OUTPUT,WIRE,REGISTER};
 struct wire
@@ -20,6 +21,8 @@ struct wire
     port* src;
     vector<port*> dest;
 };
+
+// Define port type
 struct component;
 struct port
 {
@@ -28,7 +31,10 @@ struct port
     wire* connection;
     component* parent;
 };
+
+// Define component type
 enum ComponentType{REG,ADD,SUB,MUL,COMP,MUX2x1,SHR,SHL,DIV,MOD,INC,DEC,CAST};
+const int NUM_COMPONENT_TYPES = 13;
 struct component
 {
     string name;
@@ -38,7 +44,8 @@ struct component
     map<string, port*> inputs;
     map<string, port*> outputs;
 };
-const int NUM_COMPONENT_TYPES = 13;
+
+// Inline function to convert component type to string
 inline string ComponentTypeToStr(ComponentType type)
 {
     switch (type) {
@@ -71,6 +78,8 @@ inline string ComponentTypeToStr(ComponentType type)
     }
     return "UNKNOWN"; // Return "UNKNOWN" for invalid enumerator
 }
+
+// Inline function to convert component type to integer value
 inline int ComponentTypeToInt(ComponentType type)
 {
     switch (type) {

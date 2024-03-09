@@ -7,10 +7,6 @@
 #include "FileWriter.h"
 #include "ImplicitComponentGenerator.h"
 
-using namespace CriticalPath;
-using namespace Parser;
-using namespace Writer;
-
 namespace DataPathGen
 {
 class DataPathGenerator

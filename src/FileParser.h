@@ -12,7 +12,7 @@
 
 using namespace std;
 
-namespace Parser
+namespace DataPathGen
 {
     class FileParser{
         public:
@@ -28,6 +28,6 @@ namespace Parser
             void parse_wires();
             int parse_components();
     };
-} // namespace Parser
+} // namespace DataPathGen
 
 #endif //GUARD_FileParser_h

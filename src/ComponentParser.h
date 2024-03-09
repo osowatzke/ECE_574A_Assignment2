@@ -7,10 +7,9 @@
 #include <regex>
 #include <vector>
 
-using namespace DataPathGen;
 using namespace std;
 
-namespace Parser
+namespace DataPathGen
 {
 
 class ComponentParser
@@ -23,21 +22,21 @@ class ComponentParser
         DataManager* data_manager;
         vector <wire*> undefined_wires;
         int parse_line(string line);
-        void parse_reg(vector<port*> ports);
-        void parse_add(vector<port*> ports);
-        void parse_sub(vector<port*> ports);
-        void parse_mul(vector<port*> ports);
-        void parse_gt(vector<port*> ports);
-        void parse_lt(vector<port*> ports);
-        void parse_eq(vector<port*> ports);
-        void parse_mux2x1(vector<port*> ports);
-        void parse_shr(vector<port*> ports);
-        void parse_shl(vector<port*> ports);
-        void parse_div(vector<port*> ports);
-        void parse_mod(vector<port*> ports);
-        void parse_inc(vector<port*> ports);
-        void parse_dec(vector<port*> ports);
+        void create_reg(vector<port*> ports);
+        void create_add(vector<port*> ports);
+        void create_sub(vector<port*> ports);
+        void create_mul(vector<port*> ports);
+        void create_comp_gt(vector<port*> ports);
+        void create_comp_lt(vector<port*> ports);
+        void create_comp_eq(vector<port*> ports);
+        void create_mux2x1(vector<port*> ports);
+        void create_shr(vector<port*> ports);
+        void create_shl(vector<port*> ports);
+        void create_div(vector<port*> ports);
+        void create_mod(vector<port*> ports);
+        void create_inc(vector<port*> ports);
+        void create_dec(vector<port*> ports);
 };
-} // namespace Parser
+} // namespace DataPathGen
 
 #endif // GUARD_ComponentParser_h

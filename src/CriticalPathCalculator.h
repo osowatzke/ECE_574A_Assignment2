@@ -6,7 +6,7 @@
 
 using namespace DataPathGen;
 
-namespace CriticalPath
+namespace DataPathGen
 {
 
     const double COMPONENT_DELAY[NUM_COMPONENT_TYPES][6] =
@@ -37,6 +37,6 @@ namespace CriticalPath
             double computeCriticalPath(wire* currWire);
             double getComponentDelay(component* currComponent);
     };
-}
+} // namespace DataPathGen
 
-#endif
+#endif // GUARD_CriticalPathCalculator

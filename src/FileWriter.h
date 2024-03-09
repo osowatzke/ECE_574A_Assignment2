@@ -5,9 +5,9 @@
 #include <fstream>
 #include <iostream>
 
-using namespace DataPathGen;
+using namespace std;
 
-namespace Writer
+namespace DataPathGen
 {
     class FileWriter
     {
@@ -31,6 +31,6 @@ namespace Writer
             void declareCasts();
             void declareComponents();
     };
-}
+} // namespace DataPathGen
 
 #endif //GUARD_FileWriter_h
