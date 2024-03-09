@@ -1,5 +1,7 @@
 #include "FileWriter.h"
 #include "DataManager.h"
+
+#include <iostream>
 #include <regex>
 
 namespace Writer
@@ -211,9 +213,13 @@ namespace Writer
         }
         circuitFile << endl;
     }
-    void FileWriter::run(string filePath)
+    int FileWriter::run(string filePath)
     {
-        openFile (filePath);
+        int fileStatus = openFile(filePath);
+        if (fileStatus != 0)
+        {
+            return fileStatus;
+        }
         determineModuleName(filePath);
         declareTimescale();
         declareModule();
@@ -224,10 +230,18 @@ namespace Writer
         declareComponents();
         terminateModule();
         closeFile ();
+        return 0;
     }
-    void FileWriter::openFile(string filePath)
+    int FileWriter::openFile(string filePath)
     {
-        circuitFile.open (filePath);
+        circuitFile.open(filePath);
+        if (!circuitFile.is_open())
+        {
+            cout << "ERROR: Unable to open output file: \"" << filePath << "\". Ensure output directory exists.";
+
+            return 1;
+        }
+        return 0;
     }
     void FileWriter::closeFile()
     {

@@ -29,7 +29,11 @@ int DataPathGenerator::run(string in_file_name, string out_file_name)
         return retVal;
     }
     component_generator.run();
-    file_writer.run(out_file_name);
+    retVal = file_writer.run(out_file_name);
+    if (retVal)
+    {
+        return retVal;
+    }
     critical_path.run();
     // data_manager.print_wires();
     // data_manager.print_components();
