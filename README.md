@@ -44,6 +44,17 @@ Refer to launch.json in the .vscode directory. It is currently configured to deb
 
 To debug, click on the Run and Debug tab and hit the play button to start a "Debug Data Path Generator" run.
 
+### Reference Critical Paths
+
+| Circuit           | Critical Path |
+| ----------------- | ------------- |
+| 474a_circuit1.txt | 15.688 ns     |
+| 474a_circuit2.txt | 39.511 ns     |
+| 474a_circuit3.txt | 48.267 ns     |
+| 474a_circuit4.txt | 35.514 ns     |
+| 574a_circuit5.txt | 267.765 ns    |
+| 574a_circuit6.txt | 267.765 ns    |
+
 ### Autogenerating Verilog Files
 
 Autogenerate the required verilog files by running
