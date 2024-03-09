@@ -16,10 +16,125 @@ ImplicitComponentGenerator::ImplicitComponentGenerator(DataManager* data_manager
 // Function runs the implicit component generator
 void ImplicitComponentGenerator::run()
 {
+    collapse_comparators();
     generate_implicit_casts();
     generate_implicit_registers();
     name_all_components();
     create_implicit_input_wires();
+}
+
+// Function determines whether two components share the same inputs
+bool ImplicitComponentGenerator::shared_inputs(component* a, component* b)
+{
+    // Initialize starting and ending interators
+    auto aBegin = a->inputs.begin();
+    auto bBegin = b->inputs.begin();
+    auto aEnd = a->inputs.end();
+    auto bEnd = b->inputs.end();
+
+    // Determine if inputs are matched
+    for (auto i = aBegin; i != aEnd; ++i)
+    {
+        bool inputMatch = false;
+        for (auto j = bBegin; j != bEnd; ++j)
+        {
+            if (i->second->connection == j->second->connection)
+            {
+                inputMatch = true;
+            }
+        }
+        if (!inputMatch)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+// Function combines comparators
+void ImplicitComponentGenerator::combine_comparators(component* a, component* b)
+{
+    // Append output of b to output of a
+    string outputKey = b->outputs.begin()->first;
+    port* outputValue = b->outputs.begin()->second;
+    a->outputs[outputKey] = outputValue;
+    outputValue->parent = a;
+
+    // Loop through all the input ports of b
+    auto begin = b->inputs.begin();
+    auto end = b->inputs.end();
+    for (auto it = begin; it != end; ++it)
+    {
+        port* input = it->second;
+        wire* srcWire = input->connection;
+
+        // Remove the wire connection to b's input ports
+        auto portBegin = srcWire->dest.begin();
+        auto portEnd = srcWire->dest.end();
+        for (auto portIt = portBegin; portIt != portEnd; ++portIt)
+        {
+            if (input == *portIt)
+            {
+                srcWire->dest.erase(portIt);
+                delete input;
+                break;
+            }
+        }
+    }
+
+    // Delete component
+    auto componentBegin = data_manager->components.begin();
+    auto componentEnd = data_manager->components.end();
+    for (auto it = componentBegin; it != componentEnd; ++it)
+    {
+        if (*it == b)
+        {
+            data_manager->components.erase(it);
+            delete b;
+            break;
+        }
+    }
+}
+
+// Function collapses multiple comparators which have the same inputs to a
+// single comparator which uses multiple output ports
+void ImplicitComponentGenerator::collapse_comparators()
+{
+    // Get all the comparator objects
+    vector<component*> comparators;
+    for (component*& currComponent : data_manager->components)
+    {
+        if (currComponent->type == ComponentType::COMP)
+        {
+            comparators.push_back(currComponent);
+        }
+    }
+
+    // Loop through each comparator
+    vector<bool> valid(comparators.size(), true);
+    for (size_t i = 0; i < comparators.size(); ++i)
+    {
+        // Only consider components that are still valid
+        if (valid[i])
+        {
+            for (size_t j = i + 1; j < comparators.size(); ++ j)
+            {
+                // Only consider components that are still valid
+                if (valid[j])
+                {
+                    // If both comparators share common inputs
+                    if (shared_inputs(comparators[i], comparators[j]))
+                    {
+                        // Combine comparators
+                        combine_comparators(comparators[i], comparators[j]);
+
+                        // Update valid to reflect deleted comparator
+                        valid[j] = false;
+                    }
+                }
+            }
+        }
+    }
 }
 
 // Function casts wire to correct type

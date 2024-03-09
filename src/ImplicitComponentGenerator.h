@@ -16,6 +16,9 @@ class ImplicitComponentGenerator
     private:
         DataManager* data_manager;
         void cast_wire(wire* wire);
+        bool shared_inputs(component* a, component* b);
+        void combine_comparators(component* a, component* b);
+        void collapse_comparators();
         void generate_implicit_registers();
         void generate_implicit_casts();
         void name_all_components();
