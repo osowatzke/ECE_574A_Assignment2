@@ -5,7 +5,7 @@
    Muhtasim Alam Chowdhury - mmc7
 
 2) Course Enrolled:
-   Owen Sowatzke	       - ECE574A
+   Owen Sowatzke           - ECE574A
    Matthew Nolan           - ECE474A
    Kazi Safkat             - ECE574A
    Muhtasim Alam Chowdhury - ECE574A
