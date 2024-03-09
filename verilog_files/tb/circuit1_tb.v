@@ -31,7 +31,7 @@ module circuit1_tb();
 
     circuit1_autogen autogen_circuit(.a(a), .b(b), .c(c), .z(zmeas), .x(xmeas), .Clk(Clk), .Rst(Rst));
 
-    error_monitor #(.DATAWIDTH(8)) error_monitor_i(zmeas, zref, zvalid, zerr, Clk, Rst);
-    error_monitor #(.DATAWIDTH(16)) error_monitor_j(xmeas, xref, xvalid, xerr, Clk, Rst);
+    serror_monitor #(.DATAWIDTH(8)) serror_monitor_i(zmeas, zref, zvalid, zerr, Clk, Rst);
+    serror_monitor #(.DATAWIDTH(16)) serror_monitor_j(xmeas, xref, xvalid, xerr, Clk, Rst);
     
 endmodule
