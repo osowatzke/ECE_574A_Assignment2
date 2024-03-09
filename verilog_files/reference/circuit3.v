@@ -2,16 +2,16 @@
 
 module circuit3(a, b, c, d, e, f, g, h, sa, avg, Clk, Rst);
     
-    input  Clk, Rst;
-    input  [7:0] sa;
-    input  signed [15:0] a, b, c, d, e, f, g, h;
+    input Clk, Rst;
+    input [7:0] sa;
+    input signed [15:0] a, b, c, d, e, f, g, h;
 
     output signed [15:0] avg;
 
-    wire   signed [31:0] l00, l01, l02, l03, l10, l11, l2, l2div2, l2div4, l2div8;
-    wire   signed [31:0] sa_32;
-    wire   signed [31:0] a_32, b_32, c_32, d_32, e_32, f_32, g_32, h_32;
-    wire   signed [15:0] l2div8_16;
+    wire        [31:0] sa_32;
+    wire signed [31:0] l00, l01, l02, l03, l10, l11, l2, l2div2, l2div4, l2div8;
+    wire signed [31:0] a_32, b_32, c_32, d_32, e_32, f_32, g_32, h_32;
+    wire signed [15:0] l2div8_16;
 
     // Explicitly using zero-extension here as per original structure
     assign a_32 = {{16{a[15]}}, a};
