@@ -97,13 +97,14 @@ namespace DataPathGen
             if (((currWire->type == WireType::OUTPUT) || (currWire->type == WireType::REGISTER)) && (currWire->src->parent->type != ComponentType::REG)) {
                 
                 // Create a new wire for the cast operation if it doesn't already exist
-                wire* newWire = create_wire("reg_" + currWire->name, WireType::WIRE, currWire->src->width, currWire->src->sign);
+                wire* newWire = create_wire(currWire->name + "wire", WireType::WIRE, currWire->src->width, currWire->src->sign);
                 
                 // Connect the new wire to the source wire
+                currWire->src->connection = newWire;
                 newWire->src = currWire->src;
 
                 // Create a new reg component
-                component* newRegComponent = create_reg(currWire->src->width, currWire->src->sign, {currWire, newWire});
+                component* newRegComponent = create_reg(currWire->src->width, currWire->src->sign, {newWire, currWire});
 
                 // Connect the new register component to the new wire
                 newWire->dest.push_back(newRegComponent->inputs["d"]);

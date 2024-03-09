@@ -17,7 +17,7 @@ module circuit2(a, b, c, z, x, Clk, Rst);
     SADD   #(.DATAWIDTH(32)) ADD_2(a, c, e);                // e = a + c, signed addition
     SSUB   #(.DATAWIDTH(32)) SUB_1(a, b, f);                // f = a - b, signed subtraction
     
-    SCOMP  #(.DATAWIDTH(32)) COMP_1(d, e, dLTe, , dEQe);    // dLTe = d < e, dEQe = d == e, signed comparison
+    SCOMP  #(.DATAWIDTH(32)) COMP_1(d, e, ,dLTe, dEQe);    // dLTe = d < e, dEQe = d == e, signed comparison
     SMUX2x1#(.DATAWIDTH(32)) MUX2x1_1(e, d, dLTe, g);       // g = dLTe ? d : e, signed multiplexing
     SMUX2x1#(.DATAWIDTH(32)) MUX2x1_2(f, g, dEQe, h);       // h = dEQe ? g : f, signed multiplexing
     SSHL   #(.DATAWIDTH(32)) SHL_1(g, dLTe_32, xwire);      // xwire = g << dLTe, signed shift left
