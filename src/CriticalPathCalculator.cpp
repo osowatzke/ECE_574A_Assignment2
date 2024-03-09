@@ -1,47 +1,66 @@
 #include "CriticalPathCalculator.h"
 #include "DataTypes.h"
 
+#include <algorithm>
 #include <iostream>
 
 namespace DataPathGen
 {
+    // Class constructor provides access to shared data manager
     CriticalPathCalculator::CriticalPathCalculator(DataManager* data_manager)
         : data_manager(data_manager) {};
 
+    // Function runs critical path calculation
     void CriticalPathCalculator::run()
     {
         outputCriticalPath();
     }
 
+    // Function outputs the critical path
     void CriticalPathCalculator::outputCriticalPath()
     {
+        // Compute critical path
         double criticalPath = computeCriticalPath();
+
+        // Output critical path
         cout << "Critical Path : " << criticalPath << " ns" << endl;
     }
+
+    // Function computs the critical path
     double CriticalPathCalculator::computeCriticalPath()
     {
+
+        // Initialize critical path
         double criticalPath = 0.0;
+
+        // Loop through all the wires in the data manager
         for (wire*& currWire : data_manager->wires)
         {
+
+            // Consider all input wires except clock and reset
             if ((currWire->type == WireType::INPUT) && ((currWire->name != "Clk") && (currWire->name != "Rst")))
             {
+                // Compute maximum path delay starting at input
                 double pathDelay = computeCriticalPath(currWire);
-                if (pathDelay > criticalPath)
-                {
-                    criticalPath = pathDelay;
-                }
+
+                // Update critical path
+                criticalPath = max(pathDelay, criticalPath);
             }
         }
+
+         // Loop through all the components in the data manager
         for (component*& currComponent : data_manager->components)
         {
+            // Consider only register components
             if (currComponent->type == ComponentType::REG)
             {
+                // Get maximum path delay starting at register
+                // Delay of register component included at beginning of paths only
                 double pathDelay = getComponentDelay(currComponent);
                 pathDelay += computeCriticalPath(currComponent->outputs["q"]->connection);
-                if (pathDelay > criticalPath)
-                {
-                    criticalPath = pathDelay;
-                }
+                
+                // Update critical path
+                criticalPath = max(pathDelay, criticalPath);
             }
         }
         return criticalPath;
