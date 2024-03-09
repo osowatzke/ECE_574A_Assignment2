@@ -250,18 +250,27 @@ namespace DataPathGen
     // Function declares components
     void FileWriter::declareComponents()
     {
+        // Loop for each component in the data manager
         for (component*& currComponent : data_manager->components)
         {
+            // Ignore cast components
             if (currComponent->type != ComponentType::CAST)
             {
+                // Get string for component type
                 string componentType = ComponentTypeToStr(currComponent->type);
+                
+                // Append 'S' for signed components
                 if (currComponent->sign)
                 {
                     componentType = "S" + componentType;
                 }
+
+                // Declare component
                 circuitFile << "    " << componentType;
                 circuitFile << " #(.DATAWIDTH(" << currComponent->width << ")) ";
                 circuitFile << currComponent->name << "(";
+                
+                // Declare each of the component inputs
                 auto begin = currComponent->inputs.begin();
                 auto end = currComponent->inputs.end();
                 bool firstWire = true;
@@ -274,6 +283,8 @@ namespace DataPathGen
                     firstWire = false;
                     circuitFile << "." << it->first << "(" << it->second->connection->name << ")";
                 }
+
+                // Declare each of the component outputs
                 begin = currComponent->outputs.begin();
                 end = currComponent->outputs.end();
                 for (auto it = begin; it != end; ++it)
@@ -288,11 +299,18 @@ namespace DataPathGen
                 circuitFile << ");" << endl;
             }
         }
+
+        // Terminate section with a newline
         circuitFile << endl;
     }
+
+    // Function writes the output file
     int FileWriter::run(string filePath)
     {
+        // Attempt to open file
         int fileStatus = openFile(filePath);
+
+        // Return with error if unable to open file
         if (fileStatus != 0)
         {
             return fileStatus;
@@ -309,17 +327,23 @@ namespace DataPathGen
         closeFile ();
         return 0;
     }
+
+    // Function opens the output verilog file for writing
     int FileWriter::openFile(string filePath)
     {
+        // Attempt to open file
         circuitFile.open(filePath);
+
+        // Return with an error message if unable to open file
         if (!circuitFile.is_open())
         {
             cout << "ERROR: Unable to open output file: \"" << filePath << "\". Ensure output directory exists.";
-
             return 1;
         }
         return 0;
     }
+
+    // Function closes the output verilog file
     void FileWriter::closeFile()
     {
         circuitFile.close ();
