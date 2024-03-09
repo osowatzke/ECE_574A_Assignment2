@@ -13,7 +13,7 @@ class DataManager
         vector<wire*> wires;
         vector<component*> components;
         ~DataManager();
-        string get_unique_name(string name);
+        string get_unique_wire_name(string name);
         wire* find_wire(string name);
         void print_wires();
         void print_components();

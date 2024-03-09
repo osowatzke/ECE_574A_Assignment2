@@ -6,7 +6,7 @@
 namespace DataPathGen
 {
     // Function returns a unique wire name 
-    string DataManager::get_unique_name(string name)
+    string DataManager::get_unique_wire_name(string name)
     {
         // Count of wires with the same base name
         int nameInc = -1;

@@ -161,7 +161,7 @@ namespace DataPathGen
     {
         // Create a new wire with the unique name
         wire* newWire = new wire;
-        newWire->name = data_manager->get_unique_name(name);
+        newWire->name = data_manager->get_unique_wire_name(name);
 
         // Set the properties of the new wire
         newWire->type = type;
@@ -227,11 +227,11 @@ namespace DataPathGen
         // Check and change the names of any other wire with the name clk or rst
         for (wire* currWire : data_manager->wires) {
             if ((currWire->name == "Clk") && (currWire != clkWire)) {
-                currWire->name = data_manager->get_unique_name(currWire->name);
+                currWire->name = data_manager->get_unique_wire_name(currWire->name);
             }
 
             if ((currWire->name == "Rst") && (currWire != rstWire)) {
-                currWire->name = data_manager->get_unique_name(currWire->name);
+                currWire->name = data_manager->get_unique_wire_name(currWire->name);
             }
         }
 
