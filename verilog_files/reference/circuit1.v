@@ -20,7 +20,7 @@ module circuit1(a, b, c, z, x, Clk, Rst);
     SADD   #(.DATAWIDTH(8)) ADD_1(a, b, d);                        // d = a + b, signed addition
     SADD   #(.DATAWIDTH(8)) ADD_2(a, c, e);                        // e = a + c, signed addition
 
-    SCOMP  #(.DATAWIDTH(8)) COMP_1(d, e, , g, );                   // g = d > e, signed comparison
+    SCOMP  #(.DATAWIDTH(8)) COMP_1(d, e, g, , );                   // g = d > e, signed comparison
     SMUX2x1#(.DATAWIDTH(8)) MUX2x1_1(e, d, g, zwire);              // z = g ? d : e, signed multiplexing
 
     SREG   #(.DATAWIDTH(8)) REG_1(z, zwire, Clk, Rst);             // z = zwire with register, signed

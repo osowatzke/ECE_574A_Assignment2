@@ -4,8 +4,9 @@ module circuit1_tb();
 
     localparam CLK_PERIOD = 10;     // Clock period in timesteps
     localparam RESET_TIME = 100;    // Reset time in timesteps
-    localparam C_DELAY    = 1;      // Delay in cycles from reset being deasserted to C being valid
-    
+    localparam X_DELAY    = 1;      // Delay in cycles from reset being deasserted to x being valid
+    localparam Z_DELAY    = 1;      // Delay in cycles from reset being deasserted to z being valid
+
     wire Clk;
     wire Rst;
     
@@ -24,8 +25,8 @@ module circuit1_tb();
     always @(posedge(Clk)) b <= Rst ? 0 : $random;
     always @(posedge(Clk)) c <= Rst ? 0 : $random;
 
-    valid_gen #(.DELAY(C_DELAY)) valid_gen_i(xvalid, Clk, Rst);
-    valid_gen #(.DELAY(C_DELAY)) valid_gen_j(zvalid, Clk, Rst);
+    valid_gen #(.DELAY(X_DELAY)) valid_gen_i(xvalid, Clk, Rst);
+    valid_gen #(.DELAY(Z_DELAY)) valid_gen_j(zvalid, Clk, Rst);
     
     circuit1 ref_circuit(.a(a), .b(b), .c(c), .z(zref), .x(xref), .Clk(Clk), .Rst(Rst));
 

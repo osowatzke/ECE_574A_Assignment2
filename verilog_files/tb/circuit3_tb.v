@@ -4,7 +4,7 @@ module circuit3_tb();
 
     localparam CLK_PERIOD = 10;     // Clock period in timesteps
     localparam RESET_TIME = 100;    // Reset time in timesteps
-    localparam C_DELAY    = 1;      // Delay in cycles from reset being deasserted to C being valid
+    localparam AVG_DELAY  = 1;      // Delay in cycles from reset being deasserted to avg being valid
     
     wire Clk;
     wire Rst;
@@ -28,7 +28,7 @@ module circuit3_tb();
     always @(posedge(Clk)) h <= Rst ? 0 : $random;
     always @(posedge(Clk)) sa <= Rst ? 0 : $random;
 
-    valid_gen #(.DELAY(C_DELAY)) valid_gen_i(avgvalid, Clk, Rst);
+    valid_gen #(.DELAY(AVG_DELAY)) valid_gen_i(avgvalid, Clk, Rst);
     
     circuit3 ref_circuit(.a(a), .b(b), .c(c), .d(d), .e(e), .f(f), .g(g), .h(h), .sa(sa), .avg(avgref), .Clk(Clk), .Rst(Rst));
 
