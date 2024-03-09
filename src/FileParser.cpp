@@ -14,7 +14,7 @@
 
 using namespace std;
 
-namespace Parser{
+namespace DataPathGen{
 
 FileParser::FileParser(DataManager* data_manager)
     : data_manager(data_manager)
@@ -75,4 +75,4 @@ int FileParser::parse_components()
     return component_parser.parse_lines(lines);
 }
 
-} // namespace Parser
+} // namespace DataPathGen

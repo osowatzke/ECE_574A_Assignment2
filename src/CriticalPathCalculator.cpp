@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-namespace CriticalPath
+namespace DataPathGen
 {
     CriticalPathCalculator::CriticalPathCalculator(DataManager* data_manager)
         : data_manager(data_manager) {};
@@ -110,4 +110,4 @@ namespace CriticalPath
         }
         return COMPONENT_DELAY[componentIdx][widthIdx];
     }
-}
+} // namespace DataPathGen

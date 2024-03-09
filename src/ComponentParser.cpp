@@ -5,10 +5,9 @@
 #include <iostream>
 #include <vector>
 
-using namespace DataPathGen;
 using namespace std;
 
-namespace Parser
+namespace DataPathGen
 {
     
 ComponentParser::ComponentParser(DataManager* data_manager)
@@ -446,4 +445,4 @@ void ComponentParser::parse_dec(vector<port*> ports)
     dec->outputs["d"] = d;
 }
 
-} // namespace Parser
+} // namespace DataPathGen

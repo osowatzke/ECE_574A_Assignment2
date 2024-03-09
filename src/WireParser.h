@@ -7,10 +7,9 @@
 #include <string>
 #include <vector>
 
-using namespace DataPathGen;
 using namespace std;
 
-namespace Parser
+namespace DataPathGen
 {
     class WireParser
     {
@@ -22,6 +21,6 @@ namespace Parser
             DataManager* data_manager;
             static WireType get_wire_type(string str);
     };
-} // namespace Parser
+} // namespace DataPathGen
 
 #endif // GUARD_WireParser_h

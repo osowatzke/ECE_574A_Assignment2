@@ -7,10 +7,9 @@
 #include <regex>
 #include <vector>
 
-using namespace DataPathGen;
 using namespace std;
 
-namespace Parser
+namespace DataPathGen
 {
 
 class ComponentParser
@@ -38,6 +37,6 @@ class ComponentParser
         void parse_inc(vector<port*> ports);
         void parse_dec(vector<port*> ports);
 };
-} // namespace Parser
+} // namespace DataPathGen
 
 #endif // GUARD_ComponentParser_h

@@ -7,10 +7,9 @@
 #include <regex>
 #include <vector>
 
-using namespace DataPathGen;
 using namespace std;
 
-namespace Parser
+namespace DataPathGen
 {
     WireParser::WireParser(DataManager* data_manager)
         : data_manager(data_manager) {}
@@ -76,4 +75,4 @@ namespace Parser
             parse_line(lines[i]);
         }
     }
-} // namespace Parser
+} // namespace DataPathGen

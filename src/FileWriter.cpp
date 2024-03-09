@@ -4,7 +4,7 @@
 #include <iostream>
 #include <regex>
 
-namespace Writer
+namespace DataPathGen
 {
     FileWriter::FileWriter(DataManager* data_manager)
         : data_manager(data_manager)
@@ -247,4 +247,4 @@ namespace Writer
     {
         circuitFile.close ();
     }
-}
+} // namespace DataPathGen

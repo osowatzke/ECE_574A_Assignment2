@@ -7,9 +7,6 @@
 #include <iostream>
 #include <string>
 
-using namespace Parser;
-using namespace Writer;
-
 namespace DataPathGen
 {
 
