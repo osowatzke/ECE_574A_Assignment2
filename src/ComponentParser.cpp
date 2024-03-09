@@ -9,22 +9,29 @@ using namespace std;
 
 namespace DataPathGen
 {
-    
+// Class constructor provides access to shared data manager
 ComponentParser::ComponentParser(DataManager* data_manager)
     : data_manager(data_manager) {}
 
+// Function parses components from a line of the input netlist file
 int ComponentParser::parse_line(string line)
 {
+    // Regular expression to match component instantiations
     smatch match;
     const regex component_regex{"^\\s*(\\w+)\\s*=\\s*(\\w+)\\s*(\\S+)?\\s*(\\w+)?\\s*(\\S+)?\\s*(\\w+)?\\s*$"};
     regex_match(line, match, component_regex);
+    
+    // If line matches regular expression
     if (!match.empty())
     {
+        // Create vector of wire names and operators
         vector <string> wire_names;
         vector <string> operators;
         wire_names.push_back(match.str(1));
         for (size_t i = 2; i < match.size(); ++ i)
         {
+            // Regular expression will return empty string if match is not used
+            // Do not append strings for unused wires and operators
             if (match.str(i) != "")
             {
                 if ((i % 2) == 0)
@@ -37,14 +44,23 @@ int ComponentParser::parse_line(string line)
                 }
             }
         }
+
+        // Create a new component
         component* new_component = new component;
         vector <port*> ports;
         bool firstWire = true;
+
+        // Loop through all wire names
         for (string& wire_name : wire_names)
         {
+            // Ignore wire names of "1" which occur for INC and DEC
             if (wire_name != "1")
             {  
+                // Attempt to find wire in data manager
                 wire* wire_to_connect = data_manager->find_wire(wire_name);
+                
+                // If wire does not exist create single bit wire and
+                // add to vector of undefined wires.
                 if (wire_to_connect == NULL)
                 {
                     wire_to_connect = new wire;
@@ -55,7 +71,11 @@ int ComponentParser::parse_line(string line)
                     data_manager->wires.push_back(wire_to_connect);
                     undefined_wires.push_back(wire_to_connect);
                 }
+
+                // Create port for compoent to wire connection
                 port* new_port = new port;
+
+                // First wire is an output (i.e. drives sources)
                 if (firstWire)
                 {
                     wire_to_connect->src = new_port;
@@ -70,10 +90,14 @@ int ComponentParser::parse_line(string line)
                 ports.push_back(new_port);
             }
         }
+
+        // Add new component to data manager
         data_manager->components.push_back(new_component);
+
+        // Determine which component to instantiate based on operators
         if (operators.size() == 0)
         {
-            parse_reg(ports);
+            create_reg(ports);
         }
         else if (operators.size() == 1)
         {
@@ -81,58 +105,59 @@ int ComponentParser::parse_line(string line)
             {
                 if (ports.size() == 2)
                 {
-                    parse_inc(ports);
+                    create_inc(ports);
                 }
                 else
                 {
-                    parse_add(ports);
+                    create_add(ports);
                 }
             }
             else if (operators[0] == "-")
             {
                 if (ports.size() == 2)
                 {
-                    parse_dec(ports);
+                    create_dec(ports);
                 }
                 else
                 {
-                    parse_sub(ports);
+                    create_sub(ports);
                 }
             }
             else if (operators[0] == "*")
             {
-                parse_mul(ports);
+                create_mul(ports);
             }
             else if (operators[0] == ">")
             {
-                parse_gt(ports);
+                create_comp_gt(ports);
             }
             else if (operators[0] == "<")
             {
-                parse_lt(ports);
+                create_comp_lt(ports);
             }
             else if (operators[0] == "==")
             {
-                parse_eq(ports);
+                create_comp_eq(ports);
             }
             else if (operators[0] == ">>")
             {
-                parse_shr(ports);
+                create_shr(ports);
             }
             else if (operators[0] == "<<")
             {
-                parse_shl(ports);
+                create_shl(ports);
             }
             else if (operators[0] == "/")
             {
-                parse_div(ports);
+                create_div(ports);
             }
             else if (operators[0] == "%")
             {
-                parse_mod(ports);
+                create_mod(ports);
             }
-            else
+            else 
             {
+                // Return 1 for invalid operator
                 cout << "ERROR: Incorrect operator '" << operators[0] << "'" << endl;
                 return 1;
             }
@@ -141,10 +166,11 @@ int ComponentParser::parse_line(string line)
         {
             if (operators[0] == "?" && operators[1] == ":")
             {
-                parse_mux2x1(ports);
+                create_mux2x1(ports);
             }
             else
             {
+                // Return 1 for invalid operator
                 cout << "ERROR: Incorrect Operator '" << operators[0] << "' and '" << operators[1] << "'" << endl;
                 return 1;
             }
@@ -152,29 +178,40 @@ int ComponentParser::parse_line(string line)
     }
     return 0;
 }
+
+// Function parses components in all lines of input netlist file
 int ComponentParser::parse_lines(vector<string> lines)
 {
     int retVal;
-    for (size_t i = 0; i < lines.size(); ++i)
+
+    // Parse all lines in input file
+    for (string& line : lines)
     {
-        retVal = parse_line(lines[i]);
+        retVal = parse_line(line);
+
+        // Return immediately if line cannot be parsed 
         if (retVal)
         {
             return retVal;
         }
     }
+
+    // Loop over undefined wires
     for (wire*& undefined_wire : undefined_wires)
     {
+        // Undefined wire was an input
         if (undefined_wire->src == NULL)
         {
             cout << "ERROR: Missing Input " << undefined_wire->name << endl;
             return 1;
         }
+        // Undefined wire was an output
         else if (undefined_wire->dest.size() == 0)
         {
             cout << "ERROR: Missing Output " << undefined_wire->name << endl;
             return 1;
         }
+        // Undefined wire was neither an input nor an output
         else
         {
             cout << "ERROR: Missing Wire " << undefined_wire->name << endl;
@@ -183,7 +220,9 @@ int ComponentParser::parse_lines(vector<string> lines)
     }
     return 0;
 }
-void ComponentParser::parse_reg(vector<port*> ports)
+
+// Function instantiaties a register component
+void ComponentParser::create_reg(vector<port*> ports)
 {
     component* reg = data_manager->components.back();
     reg->type = ComponentType::REG;
@@ -198,7 +237,9 @@ void ComponentParser::parse_reg(vector<port*> ports)
     reg->inputs["d"] = d;
     reg->outputs["q"] = q;
 }
-void ComponentParser::parse_add(vector<port*> ports)
+
+// Function instantiaties an adder component
+void ComponentParser::create_add(vector<port*> ports)
 {
     component* add = data_manager->components.back();
     add->type = ComponentType::ADD;
@@ -217,7 +258,9 @@ void ComponentParser::parse_add(vector<port*> ports)
     add->inputs["b"] = b;
     add->outputs["sum"] = sum;
 }
-void ComponentParser::parse_sub(vector<port*> ports)
+
+// Function instantiaties a subtractor component
+void ComponentParser::create_sub(vector<port*> ports)
 {
     component* sub = data_manager->components.back();    
     sub->type = ComponentType::SUB;
@@ -236,7 +279,9 @@ void ComponentParser::parse_sub(vector<port*> ports)
     sub->inputs["b"] = b;
     sub->outputs["diff"] = diff;
 }
-void ComponentParser::parse_mul(vector<port*> ports)
+
+// Function instantiaties a multiplier component
+void ComponentParser::create_mul(vector<port*> ports)
 {
     component* mul = data_manager->components.back();
     mul->type = ComponentType::MUL;
@@ -255,7 +300,9 @@ void ComponentParser::parse_mul(vector<port*> ports)
     mul->inputs["b"] = b;
     mul->outputs["prod"] = prod;
 }
-void ComponentParser::parse_gt(vector<port*> ports)
+
+// Function instantiaties a comparator component using the greater than output
+void ComponentParser::create_comp_gt(vector<port*> ports)
 {
     component* comp = data_manager->components.back();
     comp->type = ComponentType::COMP;
@@ -275,7 +322,8 @@ void ComponentParser::parse_gt(vector<port*> ports)
     comp->outputs["gt"] = gt;
 }
 
-void ComponentParser::parse_lt(vector<port*> ports)
+// Function instantiaties a comparator component using the less than output
+void ComponentParser::create_comp_lt(vector<port*> ports)
 {
     component* comp = data_manager->components.back();
     comp->type = ComponentType::COMP;
@@ -295,7 +343,8 @@ void ComponentParser::parse_lt(vector<port*> ports)
     comp->outputs["lt"] = lt;
 }
 
-void ComponentParser::parse_eq(vector<port*> ports)
+// Function instantiaties a comparator component using the equal to output
+void ComponentParser::create_comp_eq(vector<port*> ports)
 {
     component* comp = data_manager->components.back();
     comp->type = ComponentType::COMP;
@@ -315,7 +364,8 @@ void ComponentParser::parse_eq(vector<port*> ports)
     comp->outputs["eq"] = eq;
 }
 
-void ComponentParser::parse_mux2x1(vector<port*> ports)
+// Function instantiaties a multiplexor component
+void ComponentParser::create_mux2x1(vector<port*> ports)
 {
     component* mux2x1 = data_manager->components.back();
     mux2x1->type = ComponentType::MUX2x1;
@@ -338,7 +388,9 @@ void ComponentParser::parse_mux2x1(vector<port*> ports)
     mux2x1->inputs["a"] = a;
     mux2x1->outputs["d"] = d;
 }
-void ComponentParser::parse_shr(vector<port*> ports)
+
+// Function instantiaties a shift right component
+void ComponentParser::create_shr(vector<port*> ports)
 {
     component* shr = data_manager->components.back();
     shr->type = ComponentType::SHR;
@@ -357,7 +409,9 @@ void ComponentParser::parse_shr(vector<port*> ports)
     shr->inputs["sh_amt"] = sh_amt;
     shr->outputs["d"] = d;
 }
-void ComponentParser::parse_shl(vector<port*> ports)
+
+// Function instantiaties a shift left component
+void ComponentParser::create_shl(vector<port*> ports)
 {
     component* shl = data_manager->components.back();
     shl->type = ComponentType::SHL;
@@ -376,7 +430,9 @@ void ComponentParser::parse_shl(vector<port*> ports)
     shl->inputs["sh_amt"] = sh_amt;
     shl->outputs["d"] = d;
 }
-void ComponentParser::parse_div(vector<port*> ports)
+
+// Function instantiaties a divider component
+void ComponentParser::create_div(vector<port*> ports)
 {
     component* div = data_manager->components.back();
     div->type = ComponentType::DIV;
@@ -395,7 +451,9 @@ void ComponentParser::parse_div(vector<port*> ports)
     div->inputs["b"] = b;
     div->outputs["qout"] = qout;
 }
-void ComponentParser::parse_mod(vector<port*> ports)
+
+// Function instantiaties a modulo component
+void ComponentParser::create_mod(vector<port*> ports)
 {
     component* mod = data_manager->components.back();
     mod->type = ComponentType::MOD;
@@ -414,7 +472,9 @@ void ComponentParser::parse_mod(vector<port*> ports)
     mod->inputs["b"] = b;
     mod->outputs["rem"] = rem;
 }
-void ComponentParser::parse_inc(vector<port*> ports)
+
+// Function instantiaties an incrementor component
+void ComponentParser::create_inc(vector<port*> ports)
 {
     component* inc = data_manager->components.back();
     inc->type = ComponentType::INC;
@@ -429,7 +489,9 @@ void ComponentParser::parse_inc(vector<port*> ports)
     inc->inputs["a"] = a;
     inc->outputs["d"] = d;
 }
-void ComponentParser::parse_dec(vector<port*> ports)
+
+// Function instantiaties a decrementor component
+void ComponentParser::create_dec(vector<port*> ports)
 {
     component* dec = data_manager->components.back();
     dec->type = ComponentType::DEC;
