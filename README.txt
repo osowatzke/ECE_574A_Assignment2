@@ -13,17 +13,17 @@
 3) Brief Description of the Program:
    In this assignment, we created a High Level Synthesis (HLS) tool that converts behavioral netlists into synthesizable
    verilog datapath implementations. Additionally, our pragram returns the critical path of the datapath by utilizing
-   latency estimates of the datapath components.
-  
-   The arguments for executing the program are the path to the behavioral netlist and the path to the output file.
+   latency estimates of the datapath components. The arguments for executing the program are the path to the behavioral
+   netlist and the path to the output file.
+
    The program creates a graph topography representing the control data flow graph of the netlist. This graph is generated
    in two stages. First, all components explicitly written in the file are added to the graph in the file parser. Then,
-   the components implicitly in the graph are added. These include registers without component instantiations, and
+   the components implicitly in the graph are added. These include registers without component instantiations and
    cast components which convert between data types. The cast components have zero delay and map directly to assign
-   statements in the output verilog file. The clock and reset are also implicitly added in this stage of design.
+   statements in the output verilog file. The clock and reset are also implicitly added in this stage of the program.
    
-   The edges of the graph are instances of the wire structure, which correspond to an inputs, outputs, wires, or registers
-   in the netlist. The nodes of the graph are instances of the component structure, which correspond to the different
+   The edges of the graph are instances of wire structures, which correspond to inputs, outputs, wires, or registers
+   in the netlist. The nodes of the graph are instances of component structures, which correspond to different
    components in the netlist.
    
    The graph is then converted into a verilog file by mapping the array of wires into inputs, outputs, and wires in the
@@ -31,7 +31,8 @@
    
    The graph is also used to compute the critical path. The critical path calculation is performed by recursively
    traversing the graph starting with all inputs and registers. The maximum delay from each starting point (input or
-   register) to ending point (output or register) is computed during this recursive search.
+   register) to ending point (output or register) is computed during this recursive search. The maximum delay is the
+   critical path of the circuit.
 
 4) Individual Contributions of Group Members:
    All group members collaborated in implementing, testing and debugging the functionality of the program. Below are the 
