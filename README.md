@@ -54,6 +54,12 @@ To debug, click on the Run and Debug tab and hit the play button to start a "Deb
 | 474a_circuit4.txt | 35.514 ns     |
 | 574a_circuit5.txt | 267.765 ns    |
 | 574a_circuit6.txt | 267.765 ns    |
+| mixedcircuit1.txt | 4.924 ns      |
+| mixedcircuit2.txt | 7.270 ns      |
+| mixedcircuit3.txt | 4.924 ns      |
+| ucircuit1.txt     | 4.924 ns      |
+| ucircuit2.txt     | 7.270 ns      |
+| ucircuit3.txt     | 4.924 ns      |
 
 ### Autogenerating Verilog Files
 
