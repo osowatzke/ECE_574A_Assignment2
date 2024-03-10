@@ -2,6 +2,7 @@
 #include "DataTypes.h"
 
 #include <algorithm>
+#include <iomanip>
 #include <iostream>
 
 namespace DataPathGen
@@ -23,7 +24,7 @@ void CriticalPathCalculator::outputCriticalPath()
     double criticalPath = computeCriticalPath();
 
     // Output critical path
-    cout << "Critical Path : " << criticalPath << " ns" << endl;
+    cout << "Critical Path : " << fixed << setprecision(3) << criticalPath << " ns" << endl;
 }
 
 // Function computs the critical path
