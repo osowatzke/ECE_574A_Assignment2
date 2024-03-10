@@ -158,7 +158,7 @@ int ComponentParser::parse_line(string line)
             else 
             {
                 // Return 1 for invalid operator
-                cout << "ERROR: Incorrect operator '" << operators[0] << "'" << endl;
+                cout << "ERROR: Incorrect Operator '" << operators[0] << "'" << endl;
                 return 1;
             }
         }
@@ -202,19 +202,19 @@ int ComponentParser::parse_lines(vector<string> lines)
         // Undefined wire was an input
         if (undefined_wire->src == NULL)
         {
-            cout << "ERROR: Missing Input " << undefined_wire->name << endl;
+            cout << "ERROR: Missing Input '" << undefined_wire->name << "'" << endl;
             return 1;
         }
         // Undefined wire was an output
         else if (undefined_wire->dest.size() == 0)
         {
-            cout << "ERROR: Missing Output " << undefined_wire->name << endl;
+            cout << "ERROR: Missing Output '" << undefined_wire->name << "'" << endl;
             return 1;
         }
         // Undefined wire was neither an input nor an output
         else
         {
-            cout << "ERROR: Missing Wire " << undefined_wire->name << endl;
+            cout << "ERROR: Missing Wire '" << undefined_wire->name << "'" << endl;
             return 1;
         }
     }
