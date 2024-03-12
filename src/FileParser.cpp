@@ -42,6 +42,15 @@ int FileParser::run(string file_path)
 
     // Parse components
     retVal = parse_components();
+
+    // Return if component parsing fails
+    if (retVal)
+    {
+        return retVal;
+    }
+
+    // Validate circuit (i.e. ensure circuit is non empty)
+    retVal = validate_circuit();
     return retVal;
 }
 
@@ -102,6 +111,20 @@ void FileParser::parse_wires()
 int FileParser::parse_components()
 {
     return component_parser.parse_lines(lines);
+}
+
+// Function validates whether circuit is valid
+int FileParser::validate_circuit()
+{
+    // If circuit is empty, issue an error message and return a non-zero value
+    if ((data_manager->wires.size() == 0) && (data_manager->components.size() == 0))
+    {
+        cout << "ERROR: Empty Netlist Provided" << endl;
+        return 1;
+    }
+
+    // Return 0 for valid circuit
+    return 0;
 }
 
 } // namespace DataPathGen
