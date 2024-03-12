@@ -27,6 +27,7 @@ namespace DataPathGen
             void remove_comments();
             void parse_wires();
             int parse_components();
+            int validate_circuit();
     };
 } // namespace DataPathGen
 
